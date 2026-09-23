@@ -36,8 +36,8 @@
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; background: var(--bg); height: 100%; overflow: hidden; overscroll-behavior: none; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); height: 100%; overflow: hidden; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); overscroll-behavior-y: none; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); overflow-x: hidden; overscroll-behavior-y: none; }
 ::selection { background: var(--accent-soft); }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3, .display { font-family: var(--display); letter-spacing: -.01em; line-height: 1.1; text-wrap: balance; }
@@ -48,7 +48,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
 /* ───── Structure ───── */
-main { position: fixed; top: 0; left: 0; right: 0; bottom: calc(var(--tab) + 2px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 28px; }
+main { min-height: calc(100dvh + 2px); padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(var(--tab) + env(safe-area-inset-bottom, 0px) + 28px); }
 main > * { max-width: 620px; margin-left: auto; margin-right: auto; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .topbar h1 { font-size: 26px; font-weight: 800; } .topbar .sub { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 2px; letter-spacing: 0; }
@@ -69,7 +69,7 @@ nav.tabs button[aria-current="page"] { color: var(--accent); } nav.tabs button[a
 nav.tabs svg.i { width: 40px; height: 30px; padding: 4px 9px; border-radius: 10px; stroke-width: 2.1; overflow: visible; }
 nav.tabs .cnt { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 11px/18px var(--display); text-align: center; }
 section.view { animation: fadein .25s ease both; } @keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
-#banner { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 16px; right: 16px; z-index: 40; max-width: 620px; margin: 0 auto; padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
+#banner { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 16px; right: 16px; z-index: 40; max-width: 620px; margin: 0 auto; box-shadow: 0 4px 14px rgba(20,18,30,.25); padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
 
 /* ───── Cartes et boutons « pressables » ───── */
 .card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
@@ -547,7 +547,7 @@ const stTag = m => !m ? "" : m.statut === "fait" ? `<span class="tag ok">${ICON.
 function render() {
   tabsEl.querySelectorAll("button").forEach(b => b.dataset.tab === tab ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
   const open = shopOpen(week(weekId(today()))).length; const c = $("#shopcnt"); c.hidden = !open; c.textContent = open;
-  const y = app.scrollTop; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); app.scrollTop = render.lastTab === tab ? y : 0; render.lastTab = tab;
+  const y = window.scrollY; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); window.scrollTo(0, render.lastTab === tab ? y : 0); render.lastTab = tab;
   document.querySelectorAll(".bar i[data-p]").forEach(el => requestAnimationFrame(() => { el.style.transform = `scaleX(${el.dataset.p})`; }));
 }
 function mealActions(w, k, slot, m) {
