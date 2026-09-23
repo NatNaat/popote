@@ -1,0 +1,17 @@
+// Cache minimal de la coquille : l'appli s'ouvre même sans réseau (la liste de courses vient du miroir local), les données restent fraîches.
+const CACHE = "popote-v1";
+const SHELL = ["./", "index.html", "config.js", "manifest.webmanifest", "icon.svg", "icon-180.png"];
+self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting())));
+self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
+self.addEventListener("fetch", e => {
+  const url = new URL(e.request.url);
+  if (e.request.method !== "GET") return;
+  if (url.hostname === "cdn.jsdelivr.net") {   // supabase-js : version figée, cache d'abord
+    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })));
+    return;
+  }
+  if (url.origin !== location.origin) return;
+  // GitHub Pages sert avec max-age=600 : on revalide toujours auprès du serveur, sinon une mise à jour attend 10 min
+  e.respondWith(fetch(e.request.url, { cache: "no-cache", credentials: "same-origin" }).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })
+    .catch(() => caches.match(e.request, { ignoreSearch: true })));
+});

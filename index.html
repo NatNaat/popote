@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Popote</title>
+<meta name="theme-color" content="#F4F3F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15141B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Popote">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Même monde que le Cockpit D2 et Pages contre minutes : lavande, Bricolage Grotesque + IBM Plex Sans, le même hippo. */
+:root {
+  --bg: #F4F3F7; --surface: #FFFFFF; --surface-2: #E9E7F0; --ink: #1D1B26; --ink-2: #514E63; --muted: #6B6880; --line: #DCDAE6; --line-strong: #B9B6CC;
+  --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
+  --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2F7A86; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
+  --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
+  --display: "Bricolage Grotesque", "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --r: 16px; --tab: 64px; --ease: cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
+  --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); }
+::selection { background: var(--accent-soft); }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3, .display { font-family: var(--display); letter-spacing: -.01em; line-height: 1.1; text-wrap: balance; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+[hidden] { display: none !important; }
+.muted { color: var(--muted); } .small { font-size: 13px; } .num { font-variant-numeric: tabular-nums; }
+svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ───── Structure ───── */
+main { max-width: 620px; margin: 0 auto; padding: 14px 16px calc(env(safe-area-inset-bottom, 0px) + 32px); }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.topbar h1 { font-size: 26px; font-weight: 800; } .topbar .sub { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 2px; letter-spacing: 0; }
+.topbar .right, .hero .right { display: flex; align-items: center; gap: 8px; }
+.gear { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink-2); box-shadow: 0 2px 0 var(--line); } .gear svg.i { width: 20px; height: 20px; }
+.section { margin: 22px 0 12px; } .section h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; } .section .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .section .lead h2 { margin: 0; }
+.list { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 4px 16px; margin-bottom: 14px; }
+.setrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); } .setrow:first-of-type { border-top: 0; }
+.setrow b { display: block; font: 600 14.5px var(--body); } .setrow span { display: block; font: 500 12.5px var(--body); color: var(--muted); }
+.setrow input { width: 96px; text-align: center; padding: 8px; }
+.settings { animation: slidein .28s var(--ease) both; }
+@keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
+.back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font: 600 14px var(--body); color: var(--accent); margin-left: -6px; }
+nav.tabs { position: sticky; top: 0; z-index: 30; background: var(--surface); border-bottom: 2px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+nav.tabs button { display: grid; justify-items: center; gap: 2px; min-height: 54px; padding: 6px 0 5px; font: 600 11.5px var(--body); color: var(--muted); border-radius: 0; position: relative; }
+nav.tabs button[aria-current="page"] { color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); }
+nav.tabs svg.i { width: 26px; height: 24px; stroke-width: 2.1; overflow: visible; }
+nav.tabs .cnt { position: absolute; top: 4px; left: calc(50% + 6px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 11px/18px var(--display); text-align: center; }
+section.view { animation: fadein .25s ease both; } @keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
+#banner { max-width: 620px; margin: 0 auto 10px; padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
+
+/* ───── Cartes et boutons « pressables » ───── */
+.card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
+.card.flat { border-width: 1px; } .card.soft { background: var(--surface-2); border-color: transparent; }
+.card h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+.card .lead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; } .card .lead h2 { margin: 0; } .card .lead .link { font: 600 13px var(--body); color: var(--accent); min-height: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 20px; border-radius: 14px; font: 700 15px var(--body); letter-spacing: .01em; background: var(--accent); color: var(--accent-ink); border-bottom: 4px solid rgba(0,0,0,.28); transition: transform .08s; text-align: center; }
+.btn:active { transform: translateY(3px); border-bottom-width: 1px; }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-bottom-width: 4px; }
+.btn.ghost[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.btn.ok { background: var(--ok); color: #fff; } .btn.warn { background: var(--warn); color: #1D1B26; }
+.btn.wide { width: 100%; } .btn.sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-radius: 11px; }
+.btn:disabled { opacity: .5; transform: none; }
+.link { font: 600 14px var(--body); color: var(--accent); min-height: 40px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin: 0 -16px 12px; padding-left: 16px; padding-right: 16px; } .chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 600 13.5px var(--body); color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chip.wrap { flex: initial; }
+.chipwrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font: 600 12px var(--body); background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.tag.ok { background: var(--ok-soft); color: var(--ok); } .tag.teal { background: var(--teal-soft); color: var(--teal); } .tag.warn { background: var(--warn-soft); color: var(--warn); } .tag.bad { background: var(--bad-soft); color: var(--bad); } .tag.plum { background: var(--plum-soft); color: var(--plum); }
+.row { display: flex; gap: 10px; align-items: center; } .row > * { flex: 1; }
+.err { color: var(--bad); font: 500 13.5px var(--body); margin-top: 8px; } .err:empty { display: none; }
+label { display: block; font: 600 13px var(--body); color: var(--ink-2); margin: 12px 0 5px; }
+input, textarea, select { width: 100%; font: 16px var(--body); color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 11px 12px; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+input[type=number] { font-variant-numeric: tabular-nums; }
+input[type=checkbox] { width: 22px; height: 22px; padding: 0; margin: 0; accent-color: var(--accent); flex: none; }
+.quiet { font: 500 14px/1.5 var(--body); color: var(--muted); padding: 6px 0; }
+.note { font: 500 13px/1.5 var(--body); color: var(--muted); margin-top: 8px; }
+.bar { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; } .bar i { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px; transform-origin: left; transform: scaleX(0); transition: transform .5s var(--ease); }
+
+/* ───── Accueil ───── */
+.hero { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 2px; }
+.tonight.joined { margin-top: 0; }
+.hero h1 { font-size: 24px; font-weight: 800; } .hero .greet { font: 500 14px var(--body); color: var(--muted); margin-bottom: 4px; }
+.streakpill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font: 700 14px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.streakpill svg.i { width: 18px; height: 18px; } .streakpill.zero { background: var(--surface); color: var(--muted); border: 2px solid var(--line); }
+/* L'ardoise : le menu du soir en couleurs inversées, l'hippo en toque posé sur son bord. */
+.board { position: relative; margin: 84px 0 10px; padding: 18px 16px 16px; background: var(--ink); color: var(--bg); border-radius: var(--r); }
+.board .eyebrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 11.5px var(--body); letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.board .eyebrow .tag { background: rgba(255,255,255,.14); color: inherit; letter-spacing: 0; text-transform: none; opacity: 1; }
+.board .dish { display: block; width: 100%; text-align: left; color: inherit; font: 800 27px/1.08 var(--display); letter-spacing: -.015em; margin: 10px 0 8px; text-wrap: balance; padding-right: 56px; }
+.board .meta { font: 500 13.5px/1.4 var(--body); opacity: .8; }
+.board .say { margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,.28); font: italic 14px/1.4 var(--body); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .board .say { border-top-color: rgba(0,0,0,.25); } :root:not([data-theme="light"]) .board .eyebrow .tag { background: rgba(0,0,0,.12); } }
+:root[data-theme="dark"] .board .say { border-top-color: rgba(0,0,0,.25); } :root[data-theme="dark"] .board .eyebrow .tag { background: rgba(0,0,0,.12); }
+.board .hp-unit { position: absolute; right: 16px; bottom: calc(100% - 3px); width: 76px; }
+.board::before { content: ""; position: absolute; left: 16px; right: 16px; top: -4px; height: 4px; border-radius: 2px 2px 0 0; background: var(--line-strong); }   /* le rebord du comptoir */
+.tonight .dish { font: 800 22px/1.15 var(--display); margin: 2px 0 6px; text-wrap: balance; }
+.tonight .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tonight .ings { font: 500 14px/1.5 var(--body); color: var(--ink-2); margin-bottom: 14px; }
+.tonight .mode { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.tonight .mode .btn { flex-direction: column; gap: 2px; min-height: 62px; padding: 8px; } .tonight .mode .btn small { font: 500 12px var(--body); opacity: .8; }
+.tonight .links { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; } .tonight .links .link { min-height: 40px; }
+.done { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--ok-soft); color: var(--ok); font: 700 15px var(--display); } .done svg.i { width: 26px; height: 26px; } .done .link { margin-left: auto; color: var(--ok); }
+.essai { border-color: var(--plum); } .essai h2 { color: var(--plum); } .essai .btn.sm { min-height: 44px; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 4px 0 14px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.kpis > div { padding: 12px 12px; } .kpis > div + div { border-left: 2px solid var(--line); } .kpis dt { font: 500 11px/1.25 var(--body); color: var(--muted); } .kpis dd { margin: 4px 0 0; font: 800 17px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+
+/* ───── Semaine ───── */
+.weeknav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; } .weeknav h2 { font-size: 18px; } .weeknav button.nav { width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; } .weeknav button.nav svg.i { width: 18px; height: 18px; }
+.day { display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); } .day:first-child { border-top: 0; padding-top: 4px; }
+.day.today .dn b { color: var(--accent); }
+.day .dn { text-align: center; padding-top: 4px; } .day .dn b { display: block; font: 800 15px var(--display); text-transform: capitalize; } .day .dn small { font: 500 12px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; }
+.slot { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 8px 10px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 48px; } .slot + .slot { margin-top: 6px; }
+.slot .lbl { flex: none; width: 34px; font: 600 11px var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.slot .nm { flex: 1; min-width: 0; font: 600 14.5px/1.25 var(--body); } .slot .nm small { display: block; font: 500 12px var(--body); color: var(--muted); }
+.slot.fait { border-color: var(--ok); } .slot.saute { opacity: .55; } .slot.empty { border-style: dashed; color: var(--muted); }
+.slot .st { flex: none; }
+.resume { font: italic 14px/1.5 var(--body); color: var(--ink-2); padding: 10px 12px; border-left: 3px solid var(--accent); margin: 0 0 12px; }
+
+/* ───── Courses ───── */
+.rayon { margin-bottom: 14px; } .rayon h3 { font: 600 11.5px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px 2px; }
+.item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 48px; } .item + .item { margin-top: 6px; }
+.item .box { width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--line-strong); display: grid; place-items: center; flex: none; } .item .box svg.i { width: 16px; height: 16px; stroke-width: 3; opacity: 0; }
+.item.on { border-color: var(--line); background: var(--surface-2); } .item.on .box { background: var(--ok); border-color: var(--ok); color: #fff; } .item.on .box svg.i { opacity: 1; } .item.on .nm { text-decoration: line-through; color: var(--muted); }
+.item .nm { flex: 1; font: 600 15px var(--body); } .item .qty { font: 500 13.5px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.item .tag { flex: none; }
+.progress { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font: 600 13px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; } .progress .bar { flex: 1; }
+
+/* ───── Répertoire ───── */
+.verdicts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.verdicts .btn { flex-direction: column; gap: 2px; min-height: 66px; font-size: 15px; } .verdicts .btn i { font: 800 22px/1 var(--display); font-style: normal; }
+.vb-adore { background: var(--plum-soft) !important; color: var(--plum) !important; border-color: var(--plum) !important; }
+.vb-ok { background: var(--ok-soft) !important; color: var(--ok) !important; border-color: var(--ok) !important; }
+.vb-essai { background: var(--teal-soft) !important; color: var(--teal) !important; border-color: var(--teal) !important; }
+.vb-jamais { background: var(--bad-soft) !important; color: var(--bad) !important; border-color: var(--bad) !important; }
+.sortcard { text-align: center; padding: 26px 16px 20px; } .sortcard .cat { font: 600 11.5px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); } .sortcard .nm { font: 800 30px/1.1 var(--display); margin: 8px 0 4px; text-wrap: balance; } .sortcard .hint { font: 500 13.5px var(--body); color: var(--muted); }
+.al { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 9px 10px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 46px; } .al + .al { margin-top: 6px; }
+.al .v { flex: none; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font: 800 15px/1 var(--display); }
+.al .nm { flex: 1; font: 600 14.5px var(--body); } .al .nm small { display: block; font: 500 12px var(--body); color: var(--muted); }
+.v.adore { background: var(--plum-soft); color: var(--plum); } .v.ok { background: var(--ok-soft); color: var(--ok); } .v.essai { background: var(--teal-soft); color: var(--teal); } .v.jamais { background: var(--bad-soft); color: var(--bad); } .v.none { background: var(--surface-2); color: var(--muted); }
+.steps { margin: 0; padding-left: 22px; } .steps li { margin: 6px 0; font: 15px/1.5 var(--body); }
+.inglist { list-style: none; margin: 0 0 12px; padding: 0; } .inglist li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); font: 500 14.5px var(--body); } .inglist li span { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; } .inglist li.opt { color: var(--muted); }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; } .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; background: var(--plum-soft); color: var(--plum); font: 600 13px var(--body); }
+.thinking { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: var(--accent-soft); font: 500 14px/1.4 var(--body); margin-bottom: 12px; } .thinking .sp { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--line-strong); border-top-color: var(--accent); animation: spin 1s steps(8) infinite; flex: none; } @keyframes spin { to { transform: rotate(360deg); } }
+.thinking .link { margin-left: auto; min-height: 0; }
+
+/* ───── Hippo ───── */
+.hp-unit { position: relative; width: 64px; }
+.hp-unit svg { display: block; width: 100%; height: auto; overflow: visible; shape-rendering: crispEdges; transform-origin: 50% 100%; animation: hp-breathe 2.4s steps(2, end) infinite; }
+@keyframes hp-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.045) scaleX(.985); } }
+.hp-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: hp-blink 4.6s infinite; } @keyframes hp-blink { 0%, 92%, 100% { transform: scaleY(1); } 95%, 97% { transform: scaleY(.12); } }
+.hp-ear { transform-box: fill-box; transform-origin: 50% 100%; animation: hp-ear 6.2s steps(1, end) infinite; } .hp-ear.r { animation-delay: .18s; }
+@keyframes hp-ear { 0%, 84%, 100% { transform: none; } 86%, 90% { transform: rotate(-14deg); } 88%, 92% { transform: rotate(10deg); } }
+.hp-happy-only, .hp-cheeks, .hp-crown, .hp-spark, .hp-lids, .hp-brows, .hp-sad, .hp-tear, .hp-sweat, .hp-toque { opacity: 0; }
+.hp-unit.happy .hp-cheeks, .hp-unit.mood-great .hp-cheeks { opacity: 1; }
+.hp-unit.crowned .hp-crown { opacity: 1; transform-box: fill-box; transform-origin: 50% 100%; animation: hp-crown 3s ease-in-out infinite; } @keyframes hp-crown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.25px); } }
+.hp-unit.toque .hp-toque { opacity: 1; }
+.hp-unit.mood-great svg { animation: hp-bounce 1.5s steps(3, end) infinite; } @keyframes hp-bounce { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-3px) scaleY(1.04); } }
+.hp-unit.mood-great .hp-spark { animation: hp-spark 1.8s steps(1, end) infinite; } .hp-unit.mood-great .hp-spark.b { animation-delay: .9s; } @keyframes hp-spark { 0%, 100% { opacity: 0; } 20%, 60% { opacity: 1; } }
+.hp-unit.mood-down svg { animation-duration: 4.2s; filter: saturate(.45); } .hp-unit.mood-down .hp-ear { animation: none; } .hp-unit.mood-down .hp-ear.l { transform: rotate(-32deg) translateY(.5px); } .hp-unit.mood-down .hp-ear.r { transform: rotate(32deg) translateY(.5px); } .hp-unit.mood-down .hp-lids { opacity: 1; }
+.hp-unit.happy .hp-happy-only { opacity: 1; } .hp-unit.happy svg { animation: hp-jump .55s cubic-bezier(.3, 1.6, .5, 1) 2; } @keyframes hp-jump { 0%, 100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-14px) scale(.96, 1.06); } 60% { transform: translateY(0) scale(1.08, .9); } }
+.hp-unit.happy .hp-eyes { animation: none; opacity: 0; } .hp-unit.sleepy .hp-eyes { animation: none; transform: scaleY(.12); } .hp-unit.sleepy svg { animation-duration: 4s; }
+.hp-unit.mood-down.happy .hp-lids, .hp-unit.sleepy .hp-lids { opacity: 0; }
+.hp-unit.mood-cry .hp-ear { animation: none; } .hp-unit.mood-cry .hp-ear.l { transform: rotate(-32deg) translateY(.5px); } .hp-unit.mood-cry .hp-ear.r { transform: rotate(32deg) translateY(.5px); }
+.hp-unit.mood-cry .hp-sad { opacity: 1; } .hp-unit.mood-cry .hp-tear { opacity: 1; animation: hp-tear 1.3s steps(3, end) infinite; } .hp-unit.mood-cry .hp-tear.b { animation-delay: .5s; } @keyframes hp-tear { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
+.hp-unit.mood-cry svg { animation: hp-sob 2.2s steps(2, end) infinite; } @keyframes hp-sob { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.96) translateY(.4px); } }
+.hp-unit.mood-worried .hp-sweat { opacity: 1; animation: hp-sweat 1.6s steps(3, end) infinite; } @keyframes hp-sweat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(3px); opacity: 0; } }
+.hp-unit.mood-worried .hp-eyes { animation: hp-look 3s steps(1, end) infinite; } @keyframes hp-look { 0%, 100% { transform: translateX(0); } 30%, 45% { transform: translateX(1px); } 60%, 80% { transform: translateX(-1px); } }
+.hp-unit.spin svg { animation: hp-spin .7s cubic-bezier(.4, 0, .2, 1) 1; } @keyframes hp-spin { to { transform: rotateY(360deg); } }
+button.hp-unit { display: block; cursor: pointer; }
+.hp-bubble { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font: 500 13.5px/1.35 var(--body); color: var(--ink); }
+.hp-bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 12px; height: 12px; background: var(--surface); border-right: 2px solid var(--line); border-top: 2px solid var(--line); transform: rotate(45deg); }
+.hp-fx { position: absolute; inset: 0; pointer-events: none; } .hp-fx i { position: absolute; bottom: 60%; left: 50%; width: 6px; height: 6px; background: var(--hpp); animation: hp-pop .9s ease-out forwards; } @keyframes hp-pop { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+
+/* ───── Feuilles (dialog en bas d'écran) ───── */
+dialog { border: 0; margin: auto 0 0; width: 100%; max-width: none; max-height: 92dvh; padding: 0; background: transparent; color: var(--ink); }
+dialog::backdrop { background: rgba(20, 18, 30, .45); }
+dialog .sheet { max-width: 620px; margin: 0 auto; background: var(--surface); border-radius: 22px 22px 0 0; padding: 12px 18px calc(env(safe-area-inset-bottom, 0px) + 18px); border-top: 2px solid var(--line); max-height: 92dvh; overflow-y: auto; }
+dialog .sheet::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--line-strong); margin: 0 auto 12px; }
+dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin { from { transform: translateY(40px); opacity: 0; } }
+.sheet h1 { font-size: 22px; font-weight: 800; } .sheet .sub { font: 500 13.5px var(--body); color: var(--muted); margin: 4px 0 12px; }
+.sheet .acts { display: grid; gap: 8px; margin-top: 14px; }
+.pick { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 48px; } .pick + .pick { margin-top: 6px; } .pick b { flex: 1; font: 600 14.5px var(--body); } .pick small { color: var(--muted); font: 500 12.5px var(--body); white-space: nowrap; }
+.toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font: 600 14px var(--body); animation: fadein .25s ease both; display: flex; gap: 14px; align-items: center; max-width: calc(100vw - 32px); }
+.toast button { color: var(--pink); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<nav class="tabs" id="tabs" aria-label="Sections"><div>
+  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Ce soir</button>
+  <button data-tab="week"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Semaine</button>
+  <button data-tab="shop"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 8H6.2"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17.5" cy="20" r="1.2"/></svg>Courses<span class="cnt" id="shopcnt" hidden></span></button>
+  <button data-tab="rep"><svg class="i" viewBox="0 0 24 24"><path d="M5 3v18M5 3h11a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5"/><path d="M9 8h6M9 12h6"/></svg>Répertoire</button>
+</div></nav>
+<div id="banner" hidden></div>
+<main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
+<dialog id="dlg"></dialog>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+(() => {
+// ───────────── Utilitaires ─────────────
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const slug = s => norm(s).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48) || "x";
+const clone = o => JSON.parse(JSON.stringify(o));
+const dayKey = d => new Date(d).toLocaleDateString("sv");
+const todayKey = () => dayKey(new Date());
+const addDays = (key, n) => { const d = new Date(key + "T12:00:00"); d.setDate(d.getDate() + n); return dayKey(d); };
+const mondayOf = key => { const d = new Date(key + "T12:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return dayKey(d); };
+const weekday = key => new Date(key + "T12:00:00").getDay();
+const WD = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], WDS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+const fmtDay = (key, long) => { const d = new Date(key + "T12:00:00"); return (long ? WD : WDS)[d.getDay()] + " " + d.getDate() + (long ? " " + d.toLocaleDateString("fr-FR", { month: "long" }) : ""); };
+const plural = (n, w) => `${n} ${w}${Math.abs(n) > 1 ? "s" : ""}`;
+const pref = (k, d) => { try { const v = localStorage.getItem("pop:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+const setPref = (k, v) => { try { localStorage.setItem("pop:" + k, JSON.stringify(v)); } catch {} };
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function haptic() { try { if (navigator.vibrate) navigator.vibrate(12); } catch {} }
+function toast(msg, undo, ms) { document.querySelectorAll(".toast").forEach(t => t.remove()); const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; if (undo) { const b = document.createElement("button"); b.textContent = "Annuler"; b.onclick = () => { t.remove(); undo(); }; t.append(b); } document.body.append(t); setTimeout(() => t.remove(), ms || (undo ? 6000 : 2400)); }
+const ICON = {
+  check: '<svg class="i" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>',
+  flame: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1 .3-2 .8-2.8C9.5 10.5 10 12 11 12c0-3 0-6 1-9z"/></svg>',
+  left: '<svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>', right: '<svg class="i" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+  copy: '<svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
+  spark: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
+};
+const GEAR = `<button class="gear" data-act="settings" aria-label="Réglages"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>`;
+
+// ───────────── Vocabulaire ─────────────
+const CATS = { proteine: "Protéine", feculent: "Féculent", legume: "Légume", fruit: "Fruit", laitier: "Laitier", sauce: "Sauce & condiment", plat: "Plat", autre: "Autre" };
+const RAYONS = { fl: "Fruits & légumes", boul: "Boulangerie", bch: "Boucherie & poisson", crem: "Crèmerie", epi: "Épicerie", surg: "Surgelés", bois: "Boissons" };
+const RAYON_ORDER = ["fl", "boul", "bch", "crem", "epi", "surg", "bois"];
+const VERDICTS = { adore: { ico: "♥", lbl: "J'adore" }, ok: { ico: "✓", lbl: "Ça va" }, essai: { ico: "?", lbl: "À essayer" }, jamais: { ico: "✕", lbl: "Jamais" } };
+const EQUIP = { plaques: "Plaques / poêle", micro: "Micro-ondes", airfryer: "Air fryer", croque: "Appareil croque / gaufres / panini", four: "Four" };
+const UNITS = { g: "g", cl: "cl", piece: "", tranche: "tranche", sachet: "sachet", boite: "boîte", cs: "c. à s.", cc: "c. à c.", poignee: "poignée", brique: "brique", pot: "pot" };
+// Placard de base : toujours supposé disponible, jamais dans le répertoire ni dans la liste de courses.
+const PLACARD_BASE = ["sel", "poivre", "huile", "huile d'olive", "huile de tournesol", "vinaigre", "farine", "sucre", "curry", "paprika", "cumin", "herbes de provence", "origan", "basilic séché", "cube de bouillon", "bouillon", "citron", "jus de citron", "eau", "levure", "bicarbonate", "épices", "piment", "cannelle", "vanille"];
+// Catalogue à trier (≈110 aliments et plats courants d'étudiant). c = catégorie, r = rayon, s = se stocke (proposé dans « déjà dans le placard »).
+const CATALOG = [
+  // protéines
+  ["poulet", "Blanc de poulet", "proteine", "bch"], ["dinde", "Escalope de dinde", "proteine", "bch"], ["steak-hache", "Steak haché", "proteine", "bch"], ["jambon", "Jambon blanc", "proteine", "crem"], ["lardons", "Lardons", "proteine", "crem"], ["knacks", "Saucisses / knacks", "proteine", "crem"], ["merguez", "Merguez", "proteine", "bch"], ["oeufs", "Œufs", "proteine", "crem", 1], ["thon", "Thon en boîte", "proteine", "epi", 1], ["saumon", "Pavé de saumon", "proteine", "bch"], ["poisson-pane", "Poisson pané", "proteine", "surg"], ["cabillaud", "Cabillaud / colin", "proteine", "surg"], ["crevettes", "Crevettes", "proteine", "surg"], ["nuggets", "Nuggets de poulet", "proteine", "surg"], ["cordon-bleu", "Cordon bleu", "proteine", "crem"], ["boulettes", "Boulettes de bœuf", "proteine", "bch"], ["tofu", "Tofu", "proteine", "crem"], ["pois-chiches", "Pois chiches en boîte", "proteine", "epi", 1], ["lentilles", "Lentilles", "proteine", "epi", 1], ["haricots-rouges", "Haricots rouges en boîte", "proteine", "epi", 1], ["steak-vege", "Steak végétal", "proteine", "crem"],
+  // féculents
+  ["pates", "Pâtes", "feculent", "epi", 1], ["riz", "Riz", "feculent", "epi", 1], ["riz-micro", "Riz en sachet micro-ondes", "feculent", "epi", 1], ["pommes-de-terre", "Pommes de terre", "feculent", "fl"], ["frites", "Frites surgelées", "feculent", "surg"], ["puree", "Purée en flocons", "feculent", "epi", 1], ["semoule", "Semoule / couscous", "feculent", "epi", 1], ["pain", "Pain", "feculent", "boul"], ["pain-de-mie", "Pain de mie", "feculent", "boul", 1], ["wraps", "Wraps / tortillas", "feculent", "epi", 1], ["gnocchis", "Gnocchis", "feculent", "crem"], ["quinoa", "Quinoa", "feculent", "epi", 1], ["nouilles", "Nouilles asiatiques", "feculent", "epi", 1], ["nouilles-instant", "Nouilles instantanées", "feculent", "epi", 1], ["ble", "Blé (type Ebly)", "feculent", "epi", 1], ["pate-pizza", "Pâte à pizza", "feculent", "crem"], ["patate-douce", "Patate douce", "feculent", "fl"], ["flocons-avoine", "Flocons d'avoine", "feculent", "epi", 1], ["cereales", "Céréales", "feculent", "epi", 1],
+  // légumes
+  ["tomate", "Tomate", "legume", "fl"], ["tomates-cerises", "Tomates cerises", "legume", "fl"], ["concombre", "Concombre", "legume", "fl"], ["salade", "Salade verte", "legume", "fl"], ["carotte", "Carotte", "legume", "fl"], ["courgette", "Courgette", "legume", "fl"], ["poivron", "Poivron", "legume", "fl"], ["brocoli", "Brocoli", "legume", "surg"], ["haricots-verts", "Haricots verts", "legume", "surg"], ["petits-pois", "Petits pois", "legume", "surg"], ["mais", "Maïs en boîte", "legume", "epi", 1], ["champignons", "Champignons", "legume", "fl"], ["epinards", "Épinards", "legume", "surg"], ["oignon", "Oignon", "legume", "fl", 1], ["ail", "Ail", "legume", "fl", 1], ["avocat", "Avocat", "legume", "fl"], ["chou-fleur", "Chou-fleur", "legume", "surg"], ["aubergine", "Aubergine", "legume", "fl"], ["poireau", "Poireau", "legume", "fl"], ["betterave", "Betterave cuite", "legume", "fl"], ["radis", "Radis", "legume", "fl"], ["soupe-brique", "Soupe de légumes en brique", "legume", "epi", 1], ["ratatouille-boite", "Ratatouille en boîte", "legume", "epi", 1], ["legumes-poelee", "Poêlée de légumes surgelée", "legume", "surg"],
+  // fruits
+  ["banane", "Banane", "fruit", "fl"], ["pomme", "Pomme", "fruit", "fl"], ["poire", "Poire", "fruit", "fl"], ["clementine", "Clémentine / orange", "fruit", "fl"], ["raisin", "Raisin", "fruit", "fl"], ["fraise", "Fraise", "fruit", "fl"], ["kiwi", "Kiwi", "fruit", "fl"], ["compote", "Compote", "fruit", "epi", 1], ["fruits-rouges", "Fruits rouges surgelés", "fruit", "surg"], ["ananas", "Ananas", "fruit", "fl"], ["mangue", "Mangue", "fruit", "fl"], ["peche", "Pêche / nectarine", "fruit", "fl"], ["melon", "Melon", "fruit", "fl"], ["jus-orange", "Jus d'orange", "fruit", "bois"],
+  // laitier
+  ["fromage-rape", "Fromage râpé", "laitier", "crem", 1], ["emmental", "Emmental en tranches", "laitier", "crem"], ["mozzarella", "Mozzarella", "laitier", "crem"], ["chevre", "Fromage de chèvre", "laitier", "crem"], ["feta", "Feta", "laitier", "crem"], ["comte", "Comté", "laitier", "crem"], ["fromage-fondu", "Fromage fondu (Kiri, Vache qui rit)", "laitier", "crem"], ["yaourt", "Yaourt nature", "laitier", "crem"], ["yaourt-fruits", "Yaourt aux fruits", "laitier", "crem"], ["fromage-blanc", "Fromage blanc / skyr", "laitier", "crem"], ["lait", "Lait", "laitier", "crem", 1], ["creme", "Crème fraîche", "laitier", "crem"], ["beurre", "Beurre", "laitier", "crem", 1],
+  // sauces & condiments
+  ["sauce-tomate", "Sauce tomate", "sauce", "epi", 1], ["pesto", "Pesto", "sauce", "epi", 1], ["ketchup", "Ketchup", "sauce", "epi", 1], ["mayonnaise", "Mayonnaise", "sauce", "epi", 1], ["moutarde", "Moutarde", "sauce", "epi", 1], ["sauce-soja", "Sauce soja", "sauce", "epi", 1], ["lait-coco", "Lait de coco", "sauce", "epi", 1], ["houmous", "Houmous", "sauce", "crem"], ["beurre-cacahuete", "Beurre de cacahuète", "sauce", "epi", 1], ["miel", "Miel", "sauce", "epi", 1], ["pate-tartiner", "Pâte à tartiner", "sauce", "epi", 1], ["sauce-curry", "Sauce curry en pot", "sauce", "epi", 1], ["creme-balsamique", "Crème de balsamique", "sauce", "epi", 1],
+  // plats (pour savoir ce qu'il aime déjà en entier)
+  ["pizza", "Pizza", "plat", "surg"], ["croque-monsieur", "Croque-monsieur", "plat", "boul"], ["omelette", "Omelette", "plat", "crem"], ["quiche", "Quiche", "plat", "crem"], ["lasagnes", "Lasagnes", "plat", "crem"], ["gratin-dauphinois", "Gratin dauphinois", "plat", "crem"], ["chili", "Chili con carne", "plat", "epi"], ["curry-poulet", "Curry de poulet", "plat", "epi"], ["bolognaise", "Pâtes bolognaise", "plat", "epi"], ["carbonara", "Pâtes carbonara", "plat", "epi"], ["riz-cantonais", "Riz cantonais", "plat", "epi"], ["tacos", "Tacos / burritos", "plat", "epi"], ["burger", "Burger maison", "plat", "boul"], ["gaufres-salees", "Gaufres salées", "plat", "epi"], ["hachis", "Hachis parmentier", "plat", "crem"], ["raclette", "Raclette", "plat", "crem"], ["poke-bowl", "Poke bowl", "plat", "fl"], ["ramen", "Ramen", "plat", "epi"], ["soupe", "Soupe de légumes", "plat", "epi"], ["salade-cesar", "Salade César", "plat", "fl"], ["sushi", "Sushis", "plat", "fl"],
+  // autre
+  ["noix", "Noix / amandes", "autre", "epi", 1], ["chocolat-noir", "Chocolat noir", "autre", "epi", 1], ["granola", "Granola", "autre", "epi", 1],
+].map(([id, nom, c, r, s]) => ({ id, nom, cat: c, rayon: r, stock: !!s }));
+const CAT_BY_ID = Object.fromEntries(CATALOG.map(a => [a.id, a]));
+// Recettes de base (pour 1 personne). mode : recette (≤ 30 min) ou secours (≤ 10 min, se garde). Ingrédient : a = id du catalogue, q/u = quantité, opt = facultatif si non aimé.
+const I = (a, q, u, opt) => ({ a, q, u, opt: !!opt });
+const P = (nom, q, u) => ({ a: null, nom, q, u, placard: true });
+const BASE_RECETTES = [
+  { id: "b-carbonara", nom: "Pâtes carbonara express", mode: "recette", minutes: 20, equipement: ["plaques"], ing: [I("pates", 120, "g"), I("lardons", 75, "g"), I("creme", 10, "cl"), I("fromage-rape", 30, "g"), I("oeufs", 1, "piece", 1), I("salade", 1, "poignee", 1)], etapes: ["Fais bouillir l'eau salée, cuis les pâtes le temps indiqué.", "Pendant ce temps, fais dorer les lardons à sec 5 min.", "Baisse le feu, ajoute la crème et le fromage râpé, poivre.", "Égoutte les pâtes, mélange dans la poêle (hors du feu avec le jaune d'œuf si tu en mets).", "Quelques feuilles de salade à côté et c'est prêt."] },
+  { id: "b-curry-poulet", nom: "Poulet au curry, riz", mode: "recette", minutes: 25, equipement: ["plaques"], ing: [I("poulet", 150, "g"), I("riz", 80, "g"), I("lait-coco", 15, "cl"), I("oignon", 0.5, "piece", 1), I("petits-pois", 1, "poignee", 1), P("curry", 1, "cc")], etapes: ["Lance le riz (2 volumes d'eau pour 1 de riz, couvercle, 12 min).", "Coupe le poulet en dés, fais-le dorer 6 min dans un filet d'huile (avec l'oignon émincé si tu en mets).", "Saupoudre de curry, verse le lait de coco, laisse mijoter 8 min (petits pois dedans si tu en mets).", "Sers sur le riz."] },
+  { id: "b-wrap-poulet", nom: "Wraps poulet-crudités", mode: "recette", minutes: 15, equipement: ["plaques"], ing: [I("wraps", 2, "piece"), I("poulet", 120, "g"), I("salade", 2, "poignee"), I("tomate", 1, "piece", 1), I("fromage-rape", 20, "g", 1), I("mayonnaise", 1, "cs", 1), I("ketchup", 1, "cs", 1)], etapes: ["Coupe le poulet en lanières, poêle 6-7 min avec un peu de paprika.", "Réchauffe les wraps 20 s au micro-ondes ou à la poêle.", "Tartine de sauce, ajoute salade, poulet, tomate en dés, fromage.", "Roule serré, coupe en deux."] },
+  { id: "b-omelette", nom: "Omelette jambon-fromage, pain et salade", mode: "recette", minutes: 12, equipement: ["plaques"], ing: [I("oeufs", 3, "piece"), I("jambon", 1, "tranche"), I("fromage-rape", 30, "g"), I("pain", 2, "tranche"), I("salade", 2, "poignee", 1), I("tomates-cerises", 6, "piece", 1)], etapes: ["Bats les œufs avec sel et poivre.", "Verse dans une poêle beurrée à feu moyen ; quand ça prend, ajoute jambon en morceaux et fromage.", "Replie, sers avec le pain et la salade."] },
+  { id: "b-riz-saute", nom: "Riz sauté œuf et légumes", mode: "recette", minutes: 20, equipement: ["plaques"], ing: [I("riz", 80, "g"), I("oeufs", 2, "piece"), I("petits-pois", 2, "poignee"), I("carotte", 1, "piece", 1), I("mais", 2, "cs", 1), I("jambon", 1, "tranche", 1), I("sauce-soja", 1, "cs")], etapes: ["Cuis le riz (ou utilise un reste de riz froid : encore mieux).", "Poêle bien chaude avec un peu d'huile : brouille les œufs, réserve.", "Fais sauter petits pois, carotte en petits dés, maïs, jambon 4 min.", "Ajoute riz et œufs, arrose de sauce soja, mélange 2 min."] },
+  { id: "b-nuggets-airfryer", nom: "Nuggets, frites et haricots verts à l'air fryer", mode: "recette", minutes: 20, equipement: ["airfryer", "micro"], ing: [I("nuggets", 6, "piece"), I("frites", 150, "g"), I("haricots-verts", 120, "g"), I("ketchup", 1, "cs", 1)], etapes: ["Frites 12 min à 200 °C dans l'air fryer, secoue à mi-cuisson.", "Ajoute les nuggets pour les 8 dernières minutes.", "Haricots verts au micro-ondes 4 min avec un fond d'eau, une noisette de beurre, sel."] },
+  { id: "b-steak-puree", nom: "Steak haché, purée, haricots verts", mode: "recette", minutes: 15, equipement: ["plaques", "micro"], ing: [I("steak-hache", 1, "piece"), I("puree", 60, "g"), I("lait", 15, "cl"), I("haricots-verts", 120, "g"), I("beurre", 10, "g")], etapes: ["Chauffe le lait avec 10 cl d'eau, verse les flocons hors du feu, fouette avec le beurre.", "Haricots verts au micro-ondes 4 min avec un fond d'eau.", "Steak 3 min par face dans une poêle chaude, sel et poivre à la fin."] },
+  { id: "b-croque-salade", nom: "Croque-monsieur et tomates cerises", mode: "recette", minutes: 12, equipement: ["croque"], ing: [I("pain-de-mie", 4, "tranche"), I("jambon", 2, "tranche"), I("emmental", 2, "tranche"), I("beurre", 10, "g"), I("tomates-cerises", 8, "piece", 1), I("salade", 1, "poignee", 1)], etapes: ["Beurre l'extérieur des tranches, garnis jambon + fromage.", "Appareil à croque 4-5 min jusqu'à doré.", "Tomates cerises ou salade à côté avec un filet d'huile d'olive."] },
+  { id: "b-gaufres-salees", nom: "Gaufres salées jambon-fromage", mode: "recette", minutes: 20, equipement: ["croque"], ing: [P("farine", 120, "g"), I("oeufs", 2, "piece"), I("lait", 20, "cl"), I("fromage-rape", 50, "g"), I("jambon", 1, "tranche"), I("salade", 2, "poignee", 1)], etapes: ["Mélange farine, œufs, lait, sel ; ajoute fromage et jambon en dés.", "Gaufrier chaud, 4-5 min par gaufre.", "Salade à côté."] },
+  { id: "b-pates-thon", nom: "Pâtes sauce tomate et thon", mode: "recette", minutes: 15, equipement: ["plaques"], ing: [I("pates", 120, "g"), I("sauce-tomate", 15, "cl"), I("thon", 1, "boite"), I("fromage-rape", 20, "g", 1), I("mais", 2, "cs", 1)], etapes: ["Cuis les pâtes.", "Chauffe la sauce tomate avec le thon émietté (et le maïs), 5 min, origan si tu en as.", "Mélange, fromage râpé dessus."] },
+  { id: "b-bol-pois-chiches", nom: "Bol froid pois chiches, feta, concombre", mode: "recette", minutes: 10, equipement: [], ing: [I("pois-chiches", 1, "boite"), I("concombre", 0.5, "piece"), I("tomates-cerises", 8, "piece"), I("feta", 60, "g"), I("pain", 2, "tranche", 1), P("huile d'olive", 1, "cs"), P("citron", 0.5, "piece")], etapes: ["Rince les pois chiches.", "Coupe concombre et tomates, émiette la feta.", "Assaisonne huile d'olive, citron, sel, poivre. Pain à côté."] },
+  { id: "b-saumon-airfryer", nom: "Saumon à l'air fryer, riz, brocoli", mode: "recette", minutes: 20, equipement: ["airfryer", "plaques", "micro"], ing: [I("saumon", 1, "piece"), I("riz", 80, "g"), I("brocoli", 120, "g"), P("citron", 0.5, "piece")], etapes: ["Lance le riz.", "Saumon 10 min à 180 °C dans l'air fryer, sel, poivre, citron.", "Brocoli au micro-ondes 4 min avec un fond d'eau, noisette de beurre."] },
+  { id: "b-gnocchis-pesto", nom: "Gnocchis poêlés au pesto et tomates cerises", mode: "recette", minutes: 12, equipement: ["plaques"], ing: [I("gnocchis", 250, "g"), I("pesto", 2, "cs"), I("tomates-cerises", 8, "piece"), I("fromage-rape", 20, "g", 1)], etapes: ["Poêle chaude avec un peu d'huile : gnocchis 6-7 min sans les bouillir, ils dorent.", "Ajoute les tomates cerises coupées en deux 2 min.", "Hors du feu, mélange avec le pesto ; fromage dessus."] },
+  { id: "b-tacos", nom: "Tacos au bœuf haché", mode: "recette", minutes: 20, equipement: ["plaques"], ing: [I("wraps", 2, "piece"), I("steak-hache", 1, "piece"), I("haricots-rouges", 3, "cs", 1), I("fromage-rape", 30, "g"), I("salade", 1, "poignee"), I("tomate", 1, "piece", 1), I("creme", 1, "cs", 1), P("paprika", 1, "cc")], etapes: ["Émiette le steak dans la poêle, paprika, cumin si tu as, 6 min (haricots rouges à la fin).", "Réchauffe les wraps.", "Garnis : viande, fromage, salade, tomate, crème."] },
+  { id: "b-patate-douce-oeuf", nom: "Patate douce rôtie, œuf au plat", mode: "recette", minutes: 25, equipement: ["airfryer", "plaques"], ing: [I("patate-douce", 1, "piece"), I("oeufs", 2, "piece"), I("fromage-blanc", 2, "cs", 1), I("salade", 1, "poignee", 1)], etapes: ["Patate douce en frites, un peu d'huile, sel, paprika : 18 min à 200 °C dans l'air fryer.", "Deux œufs au plat à la fin.", "Fromage blanc salé-poivré en sauce."] },
+  { id: "b-couscous-express", nom: "Semoule, merguez et légumes", mode: "recette", minutes: 20, equipement: ["plaques"], ing: [I("semoule", 80, "g"), I("merguez", 2, "piece"), I("courgette", 0.5, "piece", 1), I("carotte", 1, "piece", 1), I("sauce-tomate", 15, "cl"), I("pois-chiches", 3, "cs", 1)], etapes: ["Merguez à la poêle 8 min.", "Dans une casserole : légumes en dés, sauce tomate, pois chiches, 10 min.", "Semoule : même volume d'eau bouillante, couvercle 5 min, égrène à la fourchette."] },
+  { id: "b-nouilles-poulet", nom: "Nouilles sautées au poulet", mode: "recette", minutes: 20, equipement: ["plaques"], ing: [I("nouilles", 100, "g"), I("poulet", 120, "g"), I("carotte", 1, "piece"), I("sauce-soja", 2, "cs"), I("oeufs", 1, "piece", 1), I("petits-pois", 1, "poignee", 1)], etapes: ["Cuis les nouilles 3-4 min, égoutte.", "Poulet en lanières 6 min à la poêle, ajoute la carotte en fines lamelles.", "Ajoute nouilles et sauce soja, saute 2 min (œuf brouillé dedans si tu veux)."] },
+  { id: "b-hachis-express", nom: "Hachis parmentier express", mode: "recette", minutes: 25, equipement: ["plaques", "micro"], ing: [I("steak-hache", 1, "piece"), I("puree", 60, "g"), I("lait", 15, "cl"), I("fromage-rape", 30, "g"), I("oignon", 0.5, "piece", 1), I("sauce-tomate", 5, "cl", 1)], etapes: ["Purée avec lait + eau + beurre.", "Viande émiettée poêlée avec l'oignon, un peu de sauce tomate.", "Dans un bol : viande, purée, fromage râpé ; 3 min au micro-ondes (ou 6 min air fryer pour gratiner)."] },
+  // secours
+  { id: "s-pates-beurre", nom: "Pâtes beurre-fromage", mode: "secours", minutes: 10, equipement: ["plaques"], ing: [I("pates", 120, "g"), I("beurre", 15, "g"), I("fromage-rape", 30, "g"), I("jambon", 1, "tranche", 1)], etapes: ["Pâtes dans l'eau bouillante salée.", "Égoutte, beurre, fromage, jambon en morceaux. Poivre."] },
+  { id: "s-croque", nom: "Croque-monsieur express", mode: "secours", minutes: 6, equipement: ["croque"], ing: [I("pain-de-mie", 4, "tranche"), I("jambon", 2, "tranche"), I("fromage-rape", 40, "g")], etapes: ["Garnis, ferme, 4-5 min dans l'appareil.", "Une pomme ou une compote derrière et c'est un repas."] },
+  { id: "s-oeufs-brouilles", nom: "Œufs brouillés, pain grillé", mode: "secours", minutes: 6, equipement: ["plaques"], ing: [I("oeufs", 3, "piece"), I("beurre", 10, "g"), I("pain", 2, "tranche"), I("fromage-rape", 20, "g", 1)], etapes: ["Œufs battus dans une poêle beurrée à feu doux, remue sans arrêt 3 min.", "Sel, poivre, fromage, pain grillé."] },
+  { id: "s-riz-thon", nom: "Riz micro-ondes, thon, maïs", mode: "secours", minutes: 5, equipement: ["micro"], ing: [I("riz-micro", 1, "sachet"), I("thon", 1, "boite"), I("mais", 3, "cs"), I("mayonnaise", 1, "cs", 1)], etapes: ["Riz 2 min au micro-ondes.", "Mélange thon émietté, maïs, mayo. Chaud ou froid."] },
+  { id: "s-nouilles-instant", nom: "Nouilles instantanées améliorées", mode: "secours", minutes: 6, equipement: ["plaques"], ing: [I("nouilles-instant", 1, "sachet"), I("oeufs", 1, "piece"), I("petits-pois", 1, "poignee", 1)], etapes: ["Nouilles dans l'eau bouillante avec le sachet d'épices.", "Casse un œuf dedans la dernière minute, petits pois surgelés avec."] },
+  { id: "s-tartines-houmous", nom: "Tartines houmous et crudités", mode: "secours", minutes: 5, equipement: [], ing: [I("pain", 3, "tranche"), I("houmous", 3, "cs"), I("concombre", 0.3, "piece", 1), I("carotte", 1, "piece", 1), I("emmental", 1, "tranche", 1)], etapes: ["Tartine, pose les crudités en rondelles.", "Fromage pour compléter."] },
+  { id: "s-wrap-thon", nom: "Wrap thon-mayo", mode: "secours", minutes: 5, equipement: [], ing: [I("wraps", 2, "piece"), I("thon", 1, "boite"), I("mayonnaise", 1, "cs"), I("mais", 2, "cs", 1), I("salade", 1, "poignee", 1)], etapes: ["Mélange thon et mayo.", "Garnis les wraps avec maïs et salade, roule."] },
+  { id: "s-pois-chiches-poeles", nom: "Pois chiches poêlés aux épices, yaourt", mode: "secours", minutes: 8, equipement: ["plaques"], ing: [I("pois-chiches", 1, "boite"), I("yaourt", 1, "pot"), I("pain", 2, "tranche", 1), P("paprika", 1, "cc")], etapes: ["Pois chiches rincés, poêle chaude avec huile et paprika, 6 min jusqu'à croustillant.", "Yaourt salé-poivré en sauce, pain."] },
+  { id: "s-soupe-fromage", nom: "Soupe en brique, fromage, pain", mode: "secours", minutes: 5, equipement: ["micro"], ing: [I("soupe-brique", 0.5, "brique"), I("fromage-rape", 30, "g"), I("pain", 2, "tranche")], etapes: ["Soupe 3 min au micro-ondes.", "Fromage râpé dedans, pain grillé."] },
+  { id: "s-quesadilla", nom: "Quesadilla jambon-fromage", mode: "secours", minutes: 6, equipement: ["croque", "plaques"], ing: [I("wraps", 1, "piece"), I("fromage-rape", 40, "g"), I("jambon", 1, "tranche", 1), I("haricots-rouges", 2, "cs", 1)], etapes: ["Garnis une moitié du wrap, replie.", "3 min dans l'appareil à croque ou 2 min par face à la poêle."] },
+];
+const BASE_BY_ID = Object.fromEntries(BASE_RECETTES.map(r => [r.id, r]));
+
+// ───────────── État ─────────────
+const DEFAULT_CONFIG = { equipement: ["plaques", "micro", "airfryer", "croque"], midiRU: [1, 2, 3, 4, 5], budgetSemaine: 35, magasin: "", raccourciCourses: "Courses", placard: [], onboardingFait: false, essaiParSemaine: 1 };
+const S = { config: clone(DEFAULT_CONFIG), aliments: {}, recettes: {}, semaines: {}, session: null, sync: "", loaded: false, diag: { errors: [] } };
+let tab = pref("tab", "home"), weekOff = 0, repCat = "all", repV = "all", sortSkip = new Set(), sorting = false;
+const app = $("#app"), dlg = $("#dlg"), tabsEl = $("#tabs"), banner = $("#banner");
+let beforeSettings = "home";
+const cfg = () => S.config;
+const today = () => todayKey();
+
+// ───────────── Persistance : Supabase (ou mode local avec ?demo), miroir local, file d'attente hors ligne ─────────────
+const LS = "popote-mirror";
+const DEMO = new URLSearchParams(location.search).has("demo") || !window.POPOTE_CONFIG?.supabaseUrl || !window.supabase;
+function mirrorSave() { try { localStorage.setItem(LS, JSON.stringify({ config: S.config, aliments: S.aliments, recettes: S.recettes, semaines: S.semaines, t: Date.now() })); } catch {} }
+function mirrorLoad() { try { const m = JSON.parse(localStorage.getItem(LS) || "null"); if (!m) return false; S.config = Object.assign(clone(DEFAULT_CONFIG), m.config || {}); S.aliments = m.aliments || {}; S.recettes = m.recettes || {}; S.semaines = m.semaines || {}; return true; } catch { return false; } }
+function diagLog(kind, info) { const e = { at: new Date().toISOString(), kind, info: typeof info === "string" ? info : JSON.stringify(info).slice(0, 400) }; S.diag.errors.push(e); if (S.diag.errors.length > 12) S.diag.errors.shift(); console.warn("[popote]", kind, info); }
+const api = DEMO ? null : (() => { const cfg = window.POPOTE_CONFIG; const sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey); const all = async q => { const { data, error } = await q; if (error) throw error; return data; };
+  return { session: async () => (await sb.auth.getSession()).data.session, signIn: async (email, password) => { const { error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; }, signOut: () => sb.auth.signOut(),
+    load: () => all(sb.from("popote_docs").select("coll,id,data")),
+    put: rows => all(sb.from("popote_docs").upsert(rows, { onConflict: "coll,id" })),
+    del: (coll, id) => all(sb.from("popote_docs").delete().eq("coll", coll).eq("id", id)),
+    secret: async () => (await all(sb.from("popote_secret").select("secret")))[0]?.secret || "" }; })();
+// Chaque modification part vers Supabase ; sans réseau elle attend dans localStorage et repart toute seule au retour.
+let outbox = pref("outbox", {}), flushTimer = null;
+const outKey = (coll, id) => coll + "/" + id;
+function persist(coll, id, obj) {
+  if (obj === null) delete S[coll][id]; else { obj.id = id; S[coll][id] = obj; }
+  mirrorSave(); outbox[outKey(coll, id)] = { coll, id, data: obj === null ? null : clone(obj) }; setPref("outbox", outbox);
+  clearTimeout(flushTimer); flushTimer = setTimeout(flush, 500);
+}
+async function flush() {
+  if (!api || !S.session || flush.busy) return; const keys = Object.keys(outbox); if (!keys.length) return setSync("ok");
+  flush.busy = true;
+  try { const puts = keys.filter(k => outbox[k].data !== null).map(k => ({ coll: outbox[k].coll, id: outbox[k].id, data: outbox[k].data, updated_at: new Date().toISOString() })), dels = keys.filter(k => outbox[k].data === null);
+    if (puts.length) await api.put(puts); for (const k of dels) await api.del(outbox[k].coll, outbox[k].id);
+    for (const k of keys) delete outbox[k]; setPref("outbox", outbox); setSync("ok"); }
+  catch (e) { diagLog("flush", e?.message || e); setSync("attente"); }
+  finally { flush.busy = false; if (Object.keys(outbox).length && navigator.onLine) setTimeout(flush, 15000); }
+}
+function setSync(st) { S.sync = st; const n = Object.keys(outbox).length; banner.hidden = !(st === "attente" && n); if (!banner.hidden) banner.textContent = `${plural(n, "modification")} en attente de réseau. Elles partiront toutes seules.`; }
+const saveConfig = () => persist("config", "main", S.config);
+const saveAliment = a => persist("aliments", a.id, a);
+const saveRecette = r => persist("recettes", r.id, r);
+const saveSemaine = w => persist("semaines", w.id, w);
+async function loadAll() {
+  if (!api || !S.session) return;
+  try { const rows = await api.load(); const next = { config: null, aliments: {}, recettes: {}, semaines: {} };
+    for (const r of rows) { if (outbox[outKey(r.coll, r.id)]) continue; if (r.coll === "config" && r.id === "main") next.config = r.data; else if (next[r.coll]) next[r.coll][r.id] = Object.assign({ id: r.id }, r.data); }
+    for (const o of Object.values(outbox)) { if (o.data === null) continue; if (o.coll === "config") next.config = o.data; else if (next[o.coll]) next[o.coll][o.id] = o.data; }   // les documents en attente gardent leur version locale
+    S.config = Object.assign(clone(DEFAULT_CONFIG), next.config || {}); S.aliments = next.aliments; S.recettes = next.recettes; S.semaines = next.semaines; S.loaded = true; mirrorSave(); render(); }
+  catch (e) { diagLog("load", e?.message || e); toast("Lecture de la base impossible : affichage de la copie locale."); }
+}
+
+// ───────────── Répertoire : verdicts, recherche de noms ─────────────
+const alimentsList = () => Object.values(S.aliments);
+const verdict = id => S.aliments[id]?.verdict || null;
+const alimentName = id => S.aliments[id]?.nom || CAT_BY_ID[id]?.nom || id;
+const alimentCat = id => S.aliments[id]?.cat || CAT_BY_ID[id]?.cat || "autre";
+const alimentRayon = id => S.aliments[id]?.rayon || CAT_BY_ID[id]?.rayon || "epi";
+const unsorted = () => CATALOG.filter(a => !S.aliments[a.id]);
+const ingName = ing => ing.a ? alimentName(ing.a) : ing.nom;
+const singular = s => s.replace(/(es|s|x)$/, "");
+// Retrouve un aliment du répertoire à partir d'un nom écrit par Claude (« blanc de poulet » → poulet).
+function resolveName(name) {
+  const n = norm(name).replace(/^(un|une|des|du|de la|de l'|d'|le|la|les|l')\s+/, ""), ns = singular(n);
+  const all = alimentsList().map(a => ({ id: a.id, n: norm(a.nom), ns: singular(norm(a.nom)) }));
+  let hit = all.find(a => a.n === n || a.ns === ns); if (hit) return hit.id;
+  const words = n.split(/[\s/(),-]+/).filter(w => w.length >= 4);
+  const cands = all.filter(a => (a.n.length >= 4 && (n.includes(a.n) || n.includes(a.ns))) || words.some(w => a.n.split(/[\s/(),-]+/).some(x => x === w || singular(x) === singular(w))));
+  cands.sort((x, y) => y.n.length - x.n.length); return cands[0]?.id || null;
+}
+const isPlacard = name => { const n = norm(name); return PLACARD_BASE.some(p => n === p || n.startsWith(p + " ") || (p.length >= 5 && n.includes(p))); };
+
+// ───────────── Recettes : pool autorisé, formats ─────────────
+const recette = id => S.recettes[id] || BASE_BY_ID[id] || null;
+const allRecettes = () => [...BASE_RECETTES.filter(b => !S.recettes[b.id]), ...Object.values(S.recettes)];
+function recetteOk(r) {
+  if (!r || r.avis === "jamais") return false;
+  if ((r.equipement || []).some(e => e !== "aucun" && EQUIP[e] && !cfg().equipement.includes(e))) return false;
+  for (const ing of r.ing || []) { if (ing.opt || ing.placard) continue; if (ing.a) { const v = verdict(ing.a); if (!v || v === "jamais" || v === "essai") return false; } }
+  return true;
+}
+const pool = mode => allRecettes().filter(r => r.mode === mode && recetteOk(r));
+const ingShown = ing => !(ing.opt && ing.a && !["adore", "ok"].includes(verdict(ing.a)));
+function fmtQ(ing) { const q = ing.q, u = ing.u || "piece"; if (!q) return ""; const qs = Number.isInteger(q) ? String(q) : q === 0.5 ? "½" : q === 0.3 ? "⅓" : String(q).replace(".", ","); const ul = UNITS[u] ?? u; if (u === "piece") return qs; if (["tranche", "sachet", "boite", "poignee", "brique", "pot"].includes(u)) return qs + " " + ul + (q > 1 && !ul.endsWith("s") ? "s" : ""); return qs + " " + ul; }
+const ingLine = r => (r.ing || []).filter(ingShown).filter(i => !i.placard).map(ingName).join(", ");
+
+// ───────────── Semaine : documents, créneaux, règles ─────────────
+const weekId = key => mondayOf(key);
+function week(monday, create) { let w = S.semaines[monday]; if (!w && create) { w = { id: monday, jours: {}, essai: null, courses: null }; S.semaines[monday] = w; } return w || null; }
+const needsMidi = key => { const wd = weekday(key); return !(cfg().midiRU || []).includes(wd); };
+const slots = key => needsMidi(key) ? ["midi", "soir"] : ["soir"];
+function weekDays(monday) { return Array.from({ length: 7 }, (_, i) => addDays(monday, i)); }
+const meal = (w, key, slot) => w?.jours?.[key]?.[slot] || null;
+function setMeal(w, key, slot, m) { w.jours[key] ||= {}; if (m) w.jours[key][slot] = m; else delete w.jours[key][slot]; }
+// Tirage par règles : jamais deux fois le même plat, priorité aux plats qu'il adore, secours qui tournent.
+function rulePick(mode, used, prefer) {
+  const cands = pool(mode).filter(r => !used.has(r.id)); const src = cands.length ? cands : pool(mode); if (!src.length) return null;
+  const loved = src.filter(r => r.avis === "adore"); const pick = prefer && loved.length && Math.random() < .6 ? rnd(loved) : rnd(src); return pick;
+}
+function ruleCompose(w, dates) {
+  const used = new Set(); for (const k of weekDays(w.id)) for (const s of ["midi", "soir"]) { const m = meal(w, k, s); if (m?.recette && !dates.includes(k)) used.add(m.recette); }
+  const usedS = new Set();
+  for (const k of dates) for (const s of slots(k)) { const prev = meal(w, k, s); if (prev?.statut === "fait") continue; const r = rulePick("recette", used, true); if (!r) { setMeal(w, k, s, null); continue; } used.add(r.id); const sec = s === "soir" ? rulePick("secours", usedS, false) : null; if (sec) usedS.add(sec.id); setMeal(w, k, s, { recette: r.id, secours: sec?.id || null, statut: "prevu", flemme: false }); }
+  if (!w.essai && (cfg().essaiParSemaine ?? 1) > 0) w.essai = ruleEssai(w);
+  w.source = w.source || "regles";
+}
+const ESSAI_PREP = { legume: "cru ou à peine cuit, en tout petits morceaux à côté de l'assiette, sans mélanger", fruit: "quelques morceaux en dessert, avec un yaourt ou une compote", proteine: "une bouchée, bien cuite, avec une sauce qu'il aime (ketchup, mayo, sauce soja)", feculent: "une petite portion à la place d'un tiers du féculent habituel", laitier: "une cuillère, avec du pain ou dans un plat chaud", sauce: "une pointe de couteau sur le bord de l'assiette", plat: "une part réduite, préparée avec des ingrédients qu'il connaît", autre: "une bouchée, sans obligation de finir" };
+function ruleEssai(w) {
+  const cands = alimentsList().filter(a => a.verdict === "essai"); if (!cands.length) return null;
+  const tried = a => (a.essais || []).length; cands.sort((x, y) => tried(x) - tried(y));
+  const a = rnd(cands.slice(0, 3)); const prefs = weekDays(w.id).filter(k => [3, 5, 6, 0].includes(weekday(k)) && k >= today());
+  return { aliment: a.id, date: prefs[0] || weekDays(w.id).find(k => k >= today()) || addDays(w.id, 6), prep: ESSAI_PREP[a.cat] || ESSAI_PREP.autre, pourquoi: "Une seule bouchée à côté d'un plat que tu aimes : on mesure, on ne force pas.", resultat: null };
+}
+// Série de soirs cuisinés (statut « fait »), en remontant depuis hier (ou aujourd'hui s'il est déjà fait).
+function streak() {
+  let k = today(), n = 0; const m0 = meal(week(weekId(k)), k, "soir"); if (m0?.statut !== "fait") k = addDays(k, -1);
+  for (let i = 0; i < 400; i++) { const m = meal(week(weekId(k)), k, "soir"); if (m?.statut !== "fait") break; n++; k = addDays(k, -1); }
+  return n;
+}
+const adoptes = () => alimentsList().filter(a => (a.essais || []).some(e => e.resultat === "adopte"));
+function faitsSemaine(monday) { let n = 0; for (const k of weekDays(monday)) for (const s of ["midi", "soir"]) if (meal(week(monday), k, s)?.statut === "fait") n++; return n; }
+
+// ───────────── Courses ─────────────
+function buildCourses(w) {
+  const agg = {}, add = (ing, secours) => { if (ing.placard || !ingShown(ing)) return; const key = ing.a || "n-" + slug(ing.nom); const u = ing.u || "piece"; const it = agg[key] ||= { k: key, nom: ingName(ing), rayon: ing.a ? alimentRayon(ing.a) : "epi", qs: {}, secours: true, inconnu: !ing.a }; if (!secours) it.secours = false; it.qs[u] = (it.qs[u] || 0) + (Number(ing.q) || 0); };
+  for (const k of weekDays(w.id)) { if (k < today()) continue; for (const s of ["midi", "soir"]) { const m = meal(w, k, s); if (!m || m.statut === "saute" || m.statut === "fait") continue; const r = recette(m.flemme && m.secours ? m.secours : m.recette); if (r) for (const ing of r.ing || []) add(ing, false); if (s === "soir" && m.secours && !m.flemme) { const sr = recette(m.secours); if (sr) for (const ing of sr.ing || []) add(ing, true); } } }
+  if (w.essai && !w.essai.resultat && w.essai.date >= today()) { const id = w.essai.aliment; agg["e-" + id] = { k: "e-" + id, nom: alimentName(id) + " (essai, petite quantité)", rayon: alimentRayon(id), qs: {}, secours: false, essai: true }; }
+  const prev = Object.fromEntries((w.courses?.items || []).map(i => [i.k, i]));
+  const items = Object.values(agg).map(it => ({ k: it.k, nom: it.nom, rayon: it.rayon, qte: Object.entries(it.qs).filter(([, q]) => q > 0).map(([u, q]) => fmtQ({ q: Math.round(q * 10) / 10, u })).join(" + "), secours: it.secours, essai: !!it.essai, inconnu: !!it.inconnu, coche: prev[it.k]?.coche || false }));
+  items.sort((a, b) => RAYON_ORDER.indexOf(a.rayon) - RAYON_ORDER.indexOf(b.rayon) || a.nom.localeCompare(b.nom, "fr"));
+  w.courses = { items, genereeLe: new Date().toISOString(), envoyeeLe: w.courses?.envoyeeLe || null };
+}
+const inPlacard = it => (cfg().placard || []).includes(it.k);
+const shopOpen = w => (w?.courses?.items || []).filter(i => !i.coche && !inPlacard(i));
+function coursesText(w) { const by = {}; for (const it of (w.courses?.items || [])) { if (it.coche || inPlacard(it)) continue; (by[it.rayon] ||= []).push(it); } return RAYON_ORDER.filter(r => by[r]).map(r => by[r].map(it => `${it.nom}${it.qte ? " · " + it.qte : ""}`).join("\n")).join("\n"); }
+function copyText(text, okMsg) { const done = () => toast(okMsg || "Copié."); try { navigator.clipboard.writeText(text).then(done, () => fallback()); } catch { fallback(); } function fallback() { const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select(); try { document.execCommand("copy"); done(); } catch { toast("Copie impossible ici : sélectionne le texte à la main."); } ta.remove(); } }
+function runShortcut(name, text) { const url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name) + "&input=text&text=" + encodeURIComponent(text); try { const w = window.open(url, "_blank"); if (!w) location.href = url; } catch { try { location.href = url; } catch { toast("Impossible d'ouvrir Raccourcis depuis cette page."); } } }
+
+// ───────────── Composition : tirage par les règles. Les semaines composées par Claude arrivent par la base (Claude Code). ─────────────
+function composeDays(monday, dates) {
+  const w = week(monday, true); dates = dates.filter(k => slots(k).some(s => meal(w, k, s)?.statut !== "fait"));
+  if (!dates.length) return toast("Ces repas sont déjà faits.");
+  if (!pool("recette").length) return toast("Trie d'abord quelques aliments dans le Répertoire : rien d'autorisé pour l'instant.", null, 4000);
+  ruleCompose(w, dates); saveSemaine(w); render();
+  toast(dates.length > 1 ? "Semaine tirée dans tes recettes autorisées." : "Autre repas tiré.");
+}
+
+// ───────────── Hippo ─────────────
+const HIPPO_ROWS = [".BB........BB.", ".BPB......BPB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", ".BBBBBBBBBBBB.", "BSSSSSSSSSSSSB", "BSSNSSSSSSNSSB", "BSSSSSSSSSSSSB", ".BSSSSSSSSSSB.", "..BBBBBBBBBB..", ".FF.FF..FF.FF."];
+function hippoSVG() { const col = { B: "var(--hp)", S: "var(--hp2)", F: "var(--hp3)", P: "var(--hpp)", N: "var(--hp3)" }; const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let body = "", earL = "", earR = "";
+  HIPPO_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === ".") return; const r = px(x, y, col[ch]); if (y < 2) { if (x < 7) earL += r; else earR += r; } else body += r; }));
+  const eyes = px(3, 4, "var(--hpk)", 1, 2) + px(10, 4, "var(--hpk)", 1, 2), cheeks = px(1, 6, "var(--hpp)", 2, 1) + px(11, 6, "var(--hpp)", 2, 1);
+  const crown = px(4, -1, "var(--hpg)") + px(6, -1, "var(--hpg)", 2, 1) + px(9, -1, "var(--hpg)") + px(4, 0, "var(--hpg)", 6, 1) + px(4, 1, "var(--hpg2)", 6, 1) + px(6, 1, "var(--hpp)", 2, 1);
+  const toque = px(3, -3, "#F4F3F7", 8, 1) + px(2, -2, "#F4F3F7", 10, 1) + px(3, -1, "#F4F3F7", 8, 1) + px(3, 0, "#DCDAE6", 8, 1);   // toque de cuisinier
+  const spark = `<g class="hp-spark">${px(0, 1, "var(--hpg)") + px(13, 3, "var(--hpg)")}</g><g class="hp-spark b">${px(13, 0, "var(--hpg)") + px(0, 4, "var(--hpg)")}</g>`;
+  const lids = px(3, 4, "var(--hp)", 1, 1) + px(10, 4, "var(--hp)", 1, 1);
+  const happy = px(5, 8, "var(--hpk)", 4, 1) + px(6, 9, "var(--hpp)", 2, 1) + px(2, 5, "var(--hpk)") + px(3, 4, "var(--hpk)") + px(4, 5, "var(--hpk)") + px(9, 5, "var(--hpk)") + px(10, 4, "var(--hpk)") + px(11, 5, "var(--hpk)");
+  const brows = px(2, 3, "var(--hpk)", 2, 1) + px(4, 4, "var(--hpk)") + px(10, 3, "var(--hpk)", 2, 1) + px(9, 4, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1);
+  const tears = `<g class="hp-tear a">${px(3, 6, "#8FB8E8")}</g><g class="hp-tear b">${px(10, 6, "#8FB8E8")}</g>`, sweat = `<g class="hp-sweat">${px(12, 2, "#8FB8E8")}</g>`, sadmouth = px(5, 9, "var(--hpk)") + px(6, 8, "var(--hpk)", 2, 1) + px(8, 9, "var(--hpk)");
+  return `<svg viewBox="0 -4 14 16" aria-hidden="true"><g class="hp-ear l">${earL}</g><g class="hp-ear r">${earR}</g>${body}<g class="hp-eyes">${eyes}</g><g class="hp-lids">${lids}</g><g class="hp-brows">${brows}</g><g class="hp-sad">${sadmouth}</g>${tears}${sweat}<g class="hp-cheeks">${cheeks}</g><g class="hp-happy-only">${happy}</g><g class="hp-crown">${crown}</g><g class="hp-toque">${toque}</g>${spark}</svg>`; }
+function hippoMood() {
+  const k = today(), w = week(weekId(k)), m = meal(w, k, "soir"), st = streak(), h = new Date().getHours(), lost = pref("lastStreak", 0), r = m ? recette(m.flemme && m.secours ? m.secours : m.recette) : null, essai = w?.essai && w.essai.date === k && !w.essai.resultat ? alimentName(w.essai.aliment) : null;
+  if (m?.statut === "fait") return { cls: "mood-great toque" + (st >= 7 ? " crowned" : ""), say: st > 1 ? `Repas fait, ${plural(st, "soir")} d'affilée. Le placard est fier de toi.` : "Repas fait. Un soir cuisiné, c'est un soir gagné." };
+  if (alimentsList().length < 12) return { cls: "", say: "On commence par trier ce que tu manges vraiment. Quelques cartes suffisent." };
+  if (!m) return { cls: "mood-down", say: "Rien de prévu ce soir. On compose la semaine ?" };
+  if (st === 0 && lost >= 3) return { cls: "mood-cry", say: `Série de ${lost} soirs perdue… Un repas ce soir et on repart.` };
+  if (h >= 21 && m.statut === "prevu") return { cls: "mood-worried", say: `${h} h et rien dans l'assiette ? Le repas de secours prend ${recette(m.secours)?.minutes || 6} minutes.` };
+  if (h >= 23 || h < 6) return { cls: "sleepy", say: "Il est tard. Coche le repas si c'est fait, et au lit." };
+  if (essai) return { cls: "", say: `Ce soir, petit essai : ${essai}. Une bouchée suffit, à côté de ${r?.nom || "ton plat"}.` };
+  if (m.statut === "saute") return { cls: "mood-down", say: "Soir sauté. Ça arrive. Demain on recommence." };
+  return { cls: st >= 7 ? "crowned" : "", say: m.flemme ? `Mode flemme : ${r?.nom || "le secours"}, ${r?.minutes || 10} min.` : `Ce soir : ${r?.nom || "?"} (${r?.minutes || "?"} min). Motivé ou flemme ?` };
+}
+const POKES = ["Hé, je surveillais la casserole.", "Un soir cuisiné, c'est un soir gagné.", "Le frigo ne se remplit pas tout seul.", "Ok, ok, je suis là.", "Tu comptes manger ou me chatouiller ?", "Une bouchée d'essai, pas dix.", "Pâtes, encore ? Bon, avec un légume alors."];
+function hippoPoke() { const h = $(".hp-unit"), b = $(".hp-say"); if (!h) return; haptic(); h.classList.remove("happy", "spin"); void h.offsetWidth; h.classList.add(Math.random() < .3 ? "spin" : "happy"); if (b) { b.textContent = rnd(POKES); clearTimeout(hippoPoke.t); hippoPoke.t = setTimeout(() => { b.textContent = hippoMood().say; }, 2600); } }
+function hippoCheer() { const h = $(".hp-unit"); if (!h) return; h.classList.remove("happy"); void h.offsetWidth; h.classList.add("happy"); const fx = document.createElement("div"); fx.className = "hp-fx"; fx.innerHTML = Array.from({ length: 8 }, (_, i) => `<i style="--dx:${Math.round(Math.cos(i / 8 * 6.28) * 34)}px;--dy:${Math.round(Math.sin(i / 8 * 6.28) * 34 - 20)}px"></i>`).join(""); h.append(fx); setTimeout(() => fx.remove(), 1000); }
+
+// ───────────── Rendu ─────────────
+const vTag = v => v ? `<span class="tag ${v === "adore" ? "plum" : v === "ok" ? "ok" : v === "essai" ? "teal" : "bad"}">${VERDICTS[v].ico} ${VERDICTS[v].lbl}</span>` : "";
+const stTag = m => !m ? "" : m.statut === "fait" ? `<span class="tag ok">${ICON.check} Fait</span>` : m.statut === "saute" ? `<span class="tag">Sauté</span>` : m.flemme ? `<span class="tag warn">Flemme</span>` : "";
+function render() {
+  tabsEl.querySelectorAll("button").forEach(b => b.dataset.tab === tab ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
+  const open = shopOpen(week(weekId(today()))).length; const c = $("#shopcnt"); c.hidden = !open; c.textContent = open;
+  const y = window.scrollY; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); if (render.lastTab === tab) window.scrollTo(0, y); else window.scrollTo(0, 0); render.lastTab = tab;
+  document.querySelectorAll(".bar i[data-p]").forEach(el => requestAnimationFrame(() => { el.style.transform = `scaleX(${el.dataset.p})`; }));
+}
+function mealActions(w, k, slot, m) {
+  const r = recette(m.flemme && m.secours ? m.secours : m.recette), sec = recette(m.secours);
+  if (!r) return `<p class="quiet">Recette introuvable.</p><button class="btn ghost sm" data-act="recompose-day" data-k="${k}">Reproposer</button>`;
+  if (m.statut === "fait") return `<div class="done">${ICON.check}<span>C'est fait.</span><button class="link" data-act="statut" data-k="${k}" data-slot="${slot}" data-v="prevu">Annuler</button></div>`;
+  return `${slot === "soir" && sec ? `<div class="mode"><button class="btn ghost" data-act="flemme" data-k="${k}" data-v="0" aria-pressed="${!m.flemme}">Motivé<small>${esc(recette(m.recette)?.nom || "")} · ${recette(m.recette)?.minutes || "?"} min</small></button><button class="btn ghost" data-act="flemme" data-k="${k}" data-v="1" aria-pressed="${!!m.flemme}">Flemme<small>${esc(sec.nom)} · ${sec.minutes} min</small></button></div>` : ""}
+    ${m.statut === "saute" ? `<button class="btn ghost wide" data-act="statut" data-k="${k}" data-slot="${slot}" data-v="prevu">Finalement je cuisine</button>` : `<button class="btn ok wide" data-act="statut" data-k="${k}" data-slot="${slot}" data-v="fait">${ICON.check} C'est fait</button>`}
+    <div class="links"><button class="link" data-act="recipe" data-id="${r.id}" data-k="${k}" data-slot="${slot}">Voir la recette</button><button class="link" data-act="other" data-k="${k}" data-slot="${slot}">Autre chose</button>${m.statut !== "saute" ? `<button class="link muted" data-act="statut" data-k="${k}" data-slot="${slot}" data-v="saute">Je saute</button>` : ""}</div>`;
+}
+function mealCard(w, k, slot, m) {
+  const r = recette(m.flemme && m.secours ? m.secours : m.recette);
+  return `<div class="card tonight"><div class="lead"><span class="tag">${slot === "soir" ? "Ce soir" : "Ce midi"}</span>${stTag(m)}</div>
+    ${r ? `<button class="dish" data-act="recipe" data-id="${r.id}" data-k="${k}" data-slot="${slot}" style="text-align:left">${esc(r.nom)}</button><div class="meta"><span class="tag">${r.minutes} min</span>${(r.equipement || []).map(e => `<span class="tag">${esc(EQUIP[e] || e)}</span>`).join("")}</div><p class="ings">${esc(ingLine(r))}</p>` : ""}${mealActions(w, k, slot, m)}</div>`;
+}
+function essaiCard(w) {
+  const e = w?.essai; if (!e || e.resultat) return ""; const a = S.aliments[e.aliment]; if (!a) return "";
+  return `<div class="card essai"><div class="lead"><h2>Essai de la semaine · ${esc(fmtDay(e.date))}</h2><span class="tag teal">? ${plural((a.essais || []).length + 1, "tentative")}</span></div>
+    <p><b>${esc(a.nom)}</b>, ${esc(e.prep)}.</p>${e.pourquoi ? `<p class="note">${esc(e.pourquoi)}</p>` : ""}
+    <div class="row" style="margin-top:12px"><button class="btn sm vb-ok" data-act="essai" data-v="adopte">✓ Adopté</button><button class="btn sm vb-essai" data-act="essai" data-v="refaire">↻ Autrement</button><button class="btn sm vb-jamais" data-act="essai" data-v="jamais">✕ Jamais</button></div>
+    <div class="links" style="display:flex;justify-content:space-between;margin-top:6px"><button class="link" data-act="essai-move">Décaler</button><button class="link muted" data-act="essai-swap">Un autre aliment</button></div></div>`;
+}
+function viewHome() {
+  const k = today(), w = week(weekId(k)), st = streak(), mood = hippoMood(), nSorted = alimentsList().length, h = new Date().getHours();
+  const sl = slots(k), primary = h < 14 && sl.includes("midi") ? "midi" : "soir", other = sl.find(x => x !== primary), m = meal(w, k, primary), r = m ? recette(m.flemme && m.secours ? m.secours : m.recette) : null;
+  let eyebrow = primary === "soir" ? "Menu du soir" : "Menu du midi", tag = "", dish, meta = "", below = "", dishAct = "";
+  if (nSorted < 12) { eyebrow = "Pour commencer"; dish = "On note tes goûts"; meta = "Quelques cartes à trier : j'adore, ça va, à essayer, jamais. Les menus ne sortiront jamais de là."; below = `<button class="btn wide" data-act="tab" data-tab="rep">Trier mes aliments</button>`; }
+  else if (!m) { dish = "Rien au menu"; meta = "La page tire une semaine dans tes recettes autorisées, avec un secours de 10 minutes chaque soir. Pour une semaine composée par Claude, demande-la dans Claude Code : elle arrive ici."; below = `<button class="btn wide" data-act="compose-week" data-monday="${weekId(k)}">Composer ma semaine</button>`; }
+  else if (!r) { dish = "Recette introuvable"; below = `<button class="btn ghost wide" data-act="recompose-day" data-k="${k}">Reproposer</button>`; }
+  else { dish = r.nom; tag = m.statut === "fait" ? `<span class="tag">${ICON.check} fait</span>` : m.statut === "saute" ? `<span class="tag">sauté</span>` : m.flemme ? `<span class="tag">flemme</span>` : ""; meta = `${r.minutes} min · ${(r.equipement || []).map(e => EQUIP[e] || e).join(", ") || "sans cuisson"} · ${esc(ingLine(r))}`; dishAct = `data-act="recipe" data-id="${r.id}" data-k="${k}" data-slot="${primary}"`; below = mealActions(w, k, primary, m); }
+  let body = `<div class="board"><button class="hp-unit toque ${mood.cls}" data-act="poke" aria-label="L'hippo">${hippoSVG()}</button><div class="eyebrow"><span>${eyebrow}</span>${tag}</div><button class="dish" ${dishAct}>${esc(dish)}</button><p class="meta">${meta}</p><p class="say hp-say" aria-live="polite">${esc(mood.say)}</p></div>
+    <div class="card tonight joined">${below}</div>`;
+  if (other && m) { const m2 = meal(w, k, other); body += m2 ? mealCard(w, k, other, m2) : `<div class="card"><div class="lead"><span class="tag">${other === "soir" ? "Ce soir" : "Ce midi"}</span></div><p class="quiet">Pas de repas prévu.</p><button class="btn ghost sm" data-act="recompose-day" data-k="${k}">Proposer</button></div>`; }
+  if (w?.essai && w.essai.date <= k && !w.essai.resultat) body += essaiCard(w);
+  const open = shopOpen(w).length; if (w?.courses && open) body += `<button class="pick" data-act="tab" data-tab="shop"><b>Courses</b><small>${plural(open, "article")} à prendre</small>${ICON.right}</button>`;
+  return `<section class="view"><div class="hero"><div><p class="greet">${esc(fmtDay(k, true))}</p><h1>Popote</h1></div><div class="right"><span class="streakpill${st ? "" : " zero"}">${ICON.flame} ${plural(st, "soir")}</span>${GEAR}</div></div>
+    ${body}
+    <dl class="kpis"><div><dt>Série</dt><dd>${plural(st, "soir")}</dd></div><div><dt>Cette semaine</dt><dd>${plural(faitsSemaine(weekId(k)), "repas")}</dd></div><div><dt>Adoptés</dt><dd>${adoptes().length}</dd></div></dl></section>`;
+}
+function viewWeek() {
+  const monday = addDays(mondayOf(today()), weekOff * 7), w = week(monday), days = weekDays(monday), k0 = today();
+  const remaining = days.filter(k => k >= k0 && slots(k).some(s => !meal(w, k, s) || meal(w, k, s).statut === "prevu"));
+  const rows = days.map(k => { const sl = slots(k); return `<div class="day${k === k0 ? " today" : ""}"><div class="dn"><b>${WDS[weekday(k)]}</b><small>${k.slice(8)}/${k.slice(5, 7)}</small></div><div>${sl.map(s => { const m = meal(w, k, s); if (!m) return k < k0 ? `<div class="slot empty"><span class="lbl">${s}</span><span class="nm">Rien de noté</span></div>` : `<button class="slot empty" data-act="recompose-day" data-k="${k}"><span class="lbl">${s}</span><span class="nm">Rien de prévu · proposer</span></button>`; const r = recette(m.flemme && m.secours ? m.secours : m.recette); return `<button class="slot ${m.statut}" data-act="recipe" data-id="${r?.id || ""}" data-k="${k}" data-slot="${s}"><span class="lbl">${s}</span><span class="nm">${esc(r?.nom || "?")}<small>${r ? r.minutes + " min" : ""}${m.secours && s === "soir" && !m.flemme ? " · secours : " + esc(recette(m.secours)?.nom || "") : ""}</small></span><span class="st">${stTag(m)}</span></button>`; }).join("")}</div></div>`; }).join("");
+  return `<section class="view"><div class="topbar"><div><h1>Semaine</h1><span class="sub">${w?.source === "claude" ? "Composée par Claude" : w ? "Composée par les règles" : "Pas encore composée"}</span></div>${GEAR}</div>
+    <div class="weeknav"><button class="nav" data-act="week-off" data-v="-1" aria-label="Semaine précédente">${ICON.left}</button><h2>${esc(fmtDay(monday))} → ${esc(fmtDay(addDays(monday, 6)))}${weekOff === 0 ? "" : weekOff === 1 ? " · prochaine" : ""}</h2><button class="nav" data-act="week-off" data-v="1" aria-label="Semaine suivante">${ICON.right}</button></div>
+    ${w?.resume ? `<p class="resume">${esc(w.resume)}</p>` : ""}
+    ${weekOff >= 0 ? (!w || !days.some(k => slots(k).some(s => meal(w, k, s))) ? `<button class="btn wide" data-act="compose-week" data-monday="${monday}">Composer ${weekOff ? "la semaine prochaine" : "ma semaine"}</button>` : remaining.length ? `<div class="row"><button class="btn ghost sm" data-act="compose-rest" data-monday="${monday}">Recomposer les ${plural(remaining.length, "jour")} restants</button><button class="btn ghost sm" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></div>` : "") : ""}
+    <div class="card" style="margin-top:12px">${rows}</div>
+    ${essaiCard(w)}${w?.essai?.resultat ? `<p class="quiet">Essai de la semaine : ${esc(alimentName(w.essai.aliment))} → ${w.essai.resultat === "adopte" ? "adopté" : w.essai.resultat === "jamais" ? "jamais" : "à refaire autrement"}.</p>` : ""}</section>`;
+}
+function viewShop() {
+  const monday = mondayOf(today()), w = week(monday); const items = w?.courses?.items || [];
+  if (!w || !items.length) return `<section class="view"><div class="topbar"><h1>Courses</h1>${GEAR}</div><div class="card"><p class="quiet">${w && Object.keys(w.jours || {}).length ? "La liste se construit depuis les repas de la semaine." : "Compose d'abord la semaine, la liste de courses en découle."}</p>${w && Object.keys(w.jours || {}).length ? `<button class="btn wide" data-act="regen-shop" data-monday="${monday}">Faire la liste</button>` : `<button class="btn wide" data-act="tab" data-tab="week">Aller à la semaine</button>`}</div></section>`;
+  const todo = items.filter(i => !inPlacard(i)), done = todo.filter(i => i.coche).length, by = {}; for (const it of todo) (by[it.rayon] ||= []).push(it);
+  const placardItems = items.filter(inPlacard), stockables = [...new Set([...items.filter(i => CAT_BY_ID[i.k]?.stock).map(i => i.k), ...(cfg().placard || [])])];
+  const row = it => `<button class="item${it.coche ? " on" : ""}" data-act="coche" data-k="${esc(it.k)}" aria-pressed="${!!it.coche}"><span class="box">${ICON.check}</span><span class="nm">${esc(it.nom)}</span>${it.secours ? `<span class="tag">secours</span>` : ""}${it.essai ? `<span class="tag teal">essai</span>` : ""}<span class="qty">${esc(it.qte)}</span></button>`;
+  return `<section class="view"><div class="topbar"><div><h1>Courses</h1><span class="sub">Semaine du ${esc(fmtDay(monday))}${cfg().magasin ? " · " + esc(cfg().magasin) : ""}</span></div>${GEAR}</div>
+    <div class="progress"><span>${done}/${todo.length}</span><div class="bar"><i data-p="${todo.length ? done / todo.length : 0}"></i></div></div>
+    <div class="row" style="margin-bottom:14px"><button class="btn ghost sm" data-act="copy-shop">${ICON.copy} Copier</button><button class="btn ghost sm" data-act="rappels">Envoyer dans Rappels</button></div>
+    ${RAYON_ORDER.filter(r => by[r]).map(r => `<div class="rayon"><h3>${RAYONS[r]}</h3>${by[r].map(row).join("")}</div>`).join("")}
+    <div class="card flat"><div class="lead"><h2>Déjà dans le placard</h2><button class="link" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></div><p class="note" style="margin:0 0 10px">Coche ce que tu as toujours chez toi : ça sort de la liste, toutes les semaines.</p><div class="chipwrap">${stockables.map(k => `<button class="chip wrap" data-act="placard" data-k="${esc(k)}" aria-pressed="${(cfg().placard || []).includes(k)}">${esc(alimentName(k))}</button>`).join("") || `<span class="quiet">Rien de stockable dans cette liste.</span>`}</div>${placardItems.length ? `<p class="note">Retirés de la liste : ${placardItems.map(i => esc(i.nom)).join(", ")}.</p>` : ""}</div>
+    <p class="note">Liste faite ${w.courses.genereeLe ? "le " + new Date(w.courses.genereeLe).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""} depuis les repas à venir. Les repas déjà faits ou sautés n'y sont plus.</p></section>`;
+}
+function viewRep() {
+  const rest = unsorted(); const w = week(mondayOf(today())); if (!alimentsList().length && rest.length) sorting = true;
+  if (sorting && rest.length) { const q = rest.filter(a => !sortSkip.has(a.id)); const a = q[0] || rest[0]; const done = CATALOG.length - rest.length;
+    return `<section class="view"><div class="topbar"><div><h1>Tri des aliments</h1><span class="sub">${done} / ${CATALOG.length} · ${plural(rest.length, "carte")} restante${rest.length > 1 ? "s" : ""}</span></div><button class="link" data-act="sort-stop">Plus tard</button></div>
+      <div class="bar" style="margin-bottom:14px"><i data-p="${done / CATALOG.length}"></i></div>
+      <div class="card sortcard"><p class="cat">${CATS[a.cat]}</p><p class="nm">${esc(a.nom)}</p><p class="hint">Tel que tu le manges d'habitude, pas dans l'absolu.</p>
+      <div class="verdicts"><button class="btn vb-adore" data-act="sort" data-id="${a.id}" data-v="adore"><i>♥</i>J'adore</button><button class="btn vb-ok" data-act="sort" data-id="${a.id}" data-v="ok"><i>✓</i>Ça va</button><button class="btn vb-essai" data-act="sort" data-id="${a.id}" data-v="essai"><i>?</i>À essayer</button><button class="btn vb-jamais" data-act="sort" data-id="${a.id}" data-v="jamais"><i>✕</i>Jamais</button></div>
+      <button class="link" data-act="sort-skip" data-id="${a.id}" style="margin-top:12px">Passer (je ne sais pas)</button></div></section>`; }
+  const list = alimentsList().filter(a => (repCat === "all" || a.cat === repCat) && (repV === "all" || a.verdict === repV)).sort((x, y) => x.nom.localeCompare(y.nom, "fr"));
+  const counts = Object.fromEntries(Object.keys(VERDICTS).map(v => [v, alimentsList().filter(a => a.verdict === v).length]));
+  const ad = adoptes();
+  return `<section class="view"><div class="topbar"><div><h1>Répertoire</h1><span class="sub">${plural(alimentsList().length, "aliment")} · ♥ ${counts.adore} · ✓ ${counts.ok} · ? ${counts.essai} · ✕ ${counts.jamais}</span></div>${GEAR}</div>
+    ${rest.length ? `<button class="btn ghost wide" data-act="sort-start" style="margin-bottom:12px">Continuer le tri (${plural(rest.length, "carte")})</button>` : ""}
+    ${essaiCard(w)}${ad.length ? `<div class="card flat"><h2>Adoptés grâce aux essais</h2><div class="badges">${ad.map(a => `<span class="badge">✓ ${esc(a.nom)}</span>`).join("")}</div></div>` : ""}
+    <div class="row" style="margin-bottom:10px"><button class="btn ghost sm" data-act="add-aliment">+ Ajouter un aliment</button></div>
+    <div class="chips">${[["all", "Tout"], ...Object.entries(VERDICTS).map(([v, d]) => [v, d.ico + " " + d.lbl])].map(([v, l]) => `<button class="chip" data-act="rep-v" data-v="${v}" aria-pressed="${repV === v}">${l}</button>`).join("")}</div>
+    <div class="chips">${[["all", "Toutes catégories"], ...Object.entries(CATS)].map(([c, l]) => `<button class="chip" data-act="rep-cat" data-v="${c}" aria-pressed="${repCat === c}">${l}</button>`).join("")}</div>
+    ${list.length ? list.map(a => `<button class="al" data-act="aliment" data-id="${a.id}"><span class="v ${a.verdict}">${VERDICTS[a.verdict].ico}</span><span class="nm">${esc(a.nom)}<small>${CATS[a.cat]}${a.notes ? " · " + esc(a.notes) : ""}${(a.essais || []).length ? " · " + plural(a.essais.length, "essai") : ""}</small></span>${ICON.right}</button>`).join("") : `<p class="quiet">Rien ici pour l'instant.</p>`}</section>`;
+}
+
+// ───────────── Feuilles ─────────────
+function openDlg(html) { dlg.innerHTML = `<div class="sheet">${html}</div>`; if (!dlg.open) dlg.showModal(); dlg.querySelector(".sheet").scrollTop = 0; }
+dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); });
+(() => { let y0 = 0, dy = 0, sheet = null, drag = false;
+  dlg.addEventListener("touchstart", e => { sheet = dlg.querySelector(".sheet"); if (!sheet) return; y0 = e.touches[0].clientY; dy = 0; drag = sheet.scrollTop <= 0 && !e.target.closest("textarea, select, input"); }, { passive: true });
+  dlg.addEventListener("touchmove", e => { if (!drag) return; dy = e.touches[0].clientY - y0; sheet.style.transition = "none"; sheet.style.transform = dy > 0 ? `translateY(${dy}px)` : ""; }, { passive: true });
+  dlg.addEventListener("touchend", () => { if (!drag) return; drag = false; sheet.style.transition = "transform .25s var(--ease)"; sheet.style.transform = ""; if (dy > 110) { haptic(); dlg.close(); } }, { passive: true }); })();
+function edgeSwipe(el, close) { let x0 = 0, y0 = 0, armed = false; el.addEventListener("touchstart", e => { const t = e.touches[0]; armed = t.clientX < 28; x0 = t.clientX; y0 = t.clientY; }, { passive: true }); el.addEventListener("touchend", e => { if (!armed) return; armed = false; const t = e.changedTouches[0]; if (t.clientX - x0 > 70 && Math.abs(t.clientY - y0) < 60) { haptic(); close(); } }, { passive: true }); }
+function dlgRecipe(id, k, slot) {
+  const r = recette(id); if (!r) return; const w = k ? week(weekId(k)) : null, m = w ? meal(w, k, slot) : null;
+  const ings = (r.ing || []).map(i => { const hide = !ingShown(i); return `<li class="${i.opt ? "opt" : ""}${hide ? " muted" : ""}">${esc(ingName(i))}${i.opt ? (hide ? " (sans, tu n'aimes pas)" : " (facultatif)") : ""}${i.inconnu ? ` <span class="tag warn">pas dans le répertoire</span>` : ""}<span>${esc(fmtQ(i))}</span></li>`; }).join("");
+  openDlg(`<h1>${esc(r.nom)}</h1><p class="sub">${r.minutes} min · ${(r.equipement || []).map(e => EQUIP[e] || e).join(", ") || "sans cuisson"} · ${r.mode === "secours" ? "repas de secours" : "recette"}${r.source === "claude" ? " · composée par Claude" : ""}</p>
+    <ul class="inglist">${ings}</ul><ol class="steps">${(r.etapes || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+    <div class="acts">${m && m.statut !== "fait" ? `<button class="btn ok wide" data-act="statut" data-k="${k}" data-slot="${slot}" data-v="fait" data-close>${ICON.check} C'est fait</button>` : ""}
+    <div class="row"><button class="btn ghost sm vb-adore" data-act="avis" data-id="${r.id}" data-v="adore" aria-pressed="${r.avis === "adore"}">♥ J'adore</button><button class="btn ghost sm" data-act="avis" data-id="${r.id}" data-v="ok" aria-pressed="${r.avis === "ok"}">✓ Ça va</button><button class="btn ghost sm vb-jamais" data-act="avis" data-id="${r.id}" data-v="jamais">✕ Plus jamais</button></div>
+    ${(r.ing || []).some(i => i.inconnu) ? `<button class="btn ghost sm" data-act="adopt-unknown" data-id="${r.id}">Ajouter les inconnus au répertoire</button>` : ""}
+    ${m ? `<button class="link" data-act="other" data-k="${k}" data-slot="${slot}">Autre chose ce ${slot}</button>` : ""}</div>`);
+}
+function dlgOther(k, slot) {
+  const w = week(weekId(k)), m = meal(w, k, slot), used = new Set(); for (const d of Object.values(w?.jours || {})) for (const x of Object.values(d)) if (x?.recette) used.add(x.recette);
+  const cands = pool("recette").filter(r => r.id !== m?.recette).sort((a, b) => (used.has(a.id) - used.has(b.id)) || (b.avis === "adore") - (a.avis === "adore") || a.nom.localeCompare(b.nom, "fr"));
+  const others = weekDays(w.id).filter(d => d !== k && meal(w, d, slot)?.statut === "prevu");
+  openDlg(`<h1>Autre chose ${slot === "soir" ? "ce soir" : "ce midi"}</h1><p class="sub">${esc(fmtDay(k, true))}</p>
+    <button class="btn wide" data-act="recompose-day" data-k="${k}" data-close>Tirer autre chose dans mes recettes</button>
+    ${others.length ? `<h2 style="margin:16px 0 8px;font-size:15px">Échanger avec</h2>${others.map(d => `<button class="pick" data-act="swap" data-k="${k}" data-slot="${slot}" data-with="${d}" data-close><b>${esc(fmtDay(d, true))}</b><small>${esc(recette(meal(w, d, slot).recette)?.nom || "")}</small></button>`).join("")}` : ""}
+    <h2 style="margin:16px 0 8px;font-size:15px">Choisir dans mes recettes</h2>${cands.slice(0, 30).map(r => `<button class="pick" data-act="choose" data-k="${k}" data-slot="${slot}" data-id="${r.id}" data-close><b>${esc(r.nom)}</b><small>${r.minutes} min${r.avis === "adore" ? " · ♥" : ""}</small></button>`).join("") || `<p class="quiet">Aucune autre recette autorisée pour l'instant.</p>`}`);
+}
+function dlgAliment(id) {
+  const a = S.aliments[id]; if (!a) return; const custom = !CAT_BY_ID[id];
+  openDlg(`<h1>${esc(a.nom)}</h1><p class="sub">${CATS[a.cat]} · rayon ${RAYONS[a.rayon] || a.rayon}</p>
+    <div class="verdicts" style="margin-top:4px">${Object.entries(VERDICTS).map(([v, d]) => `<button class="btn ${a.verdict === v ? "vb-" + v : "ghost"}" data-act="verdict" data-id="${id}" data-v="${v}" aria-pressed="${a.verdict === v}"><i>${d.ico}</i>${d.lbl}</button>`).join("")}</div>
+    <label for="al-notes">Note pour Claude (« seulement en purée », « sans la peau »…)</label><input id="al-notes" value="${esc(a.notes || "")}" maxlength="80" placeholder="Facultatif">
+    ${(a.essais || []).length ? `<p class="note">Essais : ${a.essais.map(e => `${fmtDay(e.date)} → ${e.resultat === "adopte" ? "adopté" : e.resultat === "jamais" ? "jamais" : "à refaire"}`).join(" · ")}</p>` : ""}
+    <div class="acts"><button class="btn wide" data-act="save-aliment" data-id="${id}" data-close>Enregistrer</button>${custom ? `<button class="link" data-act="del-aliment" data-id="${id}" data-close>Retirer du répertoire</button>` : `<button class="link muted" data-act="unsort" data-id="${id}" data-close>Remettre dans les cartes à trier</button>`}</div>`);
+}
+function dlgAddAliment() {
+  openDlg(`<h1>Ajouter un aliment</h1><p class="sub">Quelque chose que tu manges et qui n'est pas dans les cartes.</p>
+    <label for="na-nom">Nom</label><input id="na-nom" maxlength="60" placeholder="Ex. : cordon bleu de dinde"><label for="na-cat">Catégorie</label><select id="na-cat">${Object.entries(CATS).map(([c, l]) => `<option value="${c}">${l}</option>`).join("")}</select><label for="na-rayon">Rayon</label><select id="na-rayon">${RAYON_ORDER.map(r => `<option value="${r}">${RAYONS[r]}</option>`).join("")}</select><label>Verdict</label>
+    <div class="verdicts" style="margin-top:0">${Object.entries(VERDICTS).map(([v, d]) => `<button class="btn vb-${v}" data-act="add-aliment-go" data-v="${v}"><i>${d.ico}</i>${d.lbl}</button>`).join("")}</div><p class="err" id="na-err"></p>`);
+}
+function dlgEssaiMove() { const w = week(mondayOf(today())); if (!w?.essai) return; const days = weekDays(w.id).filter(k => k >= today()); openDlg(`<h1>Décaler l'essai</h1>${days.map(k => `<button class="pick" data-act="essai-date" data-k="${k}" data-close><b>${esc(fmtDay(k, true))}</b><small>${esc(recette(meal(w, k, "soir")?.recette)?.nom || "rien de prévu")}</small></button>`).join("")}`); }
+
+// ───────────── Réglages ─────────────
+function showSettings() { if (tab !== "settings") beforeSettings = tab; tab = "settings"; render(); }
+function closeSettings() { tab = beforeSettings || "home"; render(); }
+const renderSettings = () => render();
+function viewSettings() {
+  const c = cfg(); const d = S.diag;
+  return `<section class="view settings"><button class="back" data-act="close-settings">${ICON.left} Retour</button><h1 style="font-size:26px;margin:6px 0 16px">Réglages</h1>
+    <div class="section"><h2>Équipement</h2><div class="list">${Object.entries(EQUIP).map(([k, l]) => `<label class="setrow" style="margin:0"><b>${l}</b><input type="checkbox" data-set="equip" value="${k}" ${c.equipement.includes(k) ? "checked" : ""}></label>`).join("")}</div></div>
+    <div class="section"><h2>Midi au RU</h2><p class="note" style="margin:0 0 8px">Les jours cochés, Popote ne prévoit que le soir.</p><div class="chipwrap">${[1, 2, 3, 4, 5, 6, 0].map(wd => `<button class="chip wrap" data-act="toggle-ru" data-v="${wd}" aria-pressed="${c.midiRU.includes(wd)}">${WD[wd]}</button>`).join("")}</div></div>
+    <div class="section"><h2>Courses et essais</h2><div class="list">
+      <div class="setrow"><div><b>Budget par semaine</b><span>Indicatif, donné à Claude</span></div><input id="st-budget" type="number" min="10" max="150" value="${c.budgetSemaine || 35}"></div>
+      <div class="setrow"><div><b>Magasin</b><span>Pour mémoire</span></div><input id="st-magasin" type="text" value="${esc(c.magasin || "")}" placeholder="Lidl…" style="width:130px;text-align:left"></div>
+      <div class="setrow"><div><b>Raccourci iOS « Rappels »</b><span>Nom du raccourci qui reçoit la liste</span></div><input id="st-raccourci" type="text" value="${esc(c.raccourciCourses || "Courses")}" style="width:130px;text-align:left"></div>
+      <div class="setrow"><div><b>Essai par semaine</b><span>0 pour couper l'exposition progressive</span></div><input id="st-essai" type="number" min="0" max="1" value="${c.essaiParSemaine ?? 1}"></div></div>
+      <button class="btn wide" data-act="save-settings">Enregistrer</button></div>
+    <div class="section"><h2>Compte et Claude Code</h2><div class="list">
+      <div class="setrow"><div><b>${esc(S.session?.user?.email || "Mode local")}</b><span>${DEMO ? "Les données restent dans ce navigateur" : S.sync === "attente" ? "Modifications en attente de réseau" : "Synchronisé avec Supabase"}</span></div>${api ? `<button class="btn ghost sm" data-act="signout">Se déconnecter</button>` : ""}</div>
+      ${api ? `<div class="setrow"><div><b>Clé pour Claude Code</b><span>À lui donner une fois : il compose la semaine et l'écrit ici</span></div><button class="btn ghost sm" data-act="copy-secret">Copier</button></div>` : ""}</div></div>
+    <div class="section"><h2>Données</h2><div class="row"><button class="btn ghost sm" data-act="export">Copier l'export JSON</button><button class="btn ghost sm" data-act="import">Importer</button></div><p class="note">L'export contient réglages, répertoire, recettes et semaines.</p></div>
+    <div class="section"><h2>Diagnostic</h2><pre style="white-space:pre-wrap;font:12px/1.5 ui-monospace,monospace;color:var(--muted)">${esc([`Aliments : ${alimentsList().length} · recettes : ${Object.keys(S.recettes).length} · semaines : ${Object.keys(S.semaines).length} · en attente : ${Object.keys(outbox).length}`, ...d.errors.map(e => `${e.at.slice(11, 19)} ${e.kind} ${e.info}`)].join("\n"))}</pre></div></section>`;
+}
+
+// ───────────── Actions ─────────────
+tabsEl.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) { tab = b.dataset.tab; setPref("tab", tab); render(); } });
+if (!["home", "week", "shop", "rep"].includes(tab)) tab = "home";
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act, D = el.dataset;
+  const w0 = () => week(mondayOf(today()), true);
+  try {
+    if (act === "tab") { tab = D.tab; setPref("tab", tab); render(); }
+    else if (act === "poke") hippoPoke();
+    else if (act === "settings") showSettings();
+    else if (act === "close-settings") closeSettings();
+        else if (act === "compose-week") { const monday = D.monday; await composeDays(monday, weekDays(monday).filter(k => k >= today())); }
+    else if (act === "compose-rest") { const monday = D.monday, w = week(monday, true); await composeDays(monday, weekDays(monday).filter(k => k >= today() && slots(k).some(s => !meal(w, k, s) || meal(w, k, s).statut === "prevu"))); }
+    else if (act === "recompose-day") { const k = D.k; const w = week(weekId(k), true); for (const s of slots(k)) { const m = meal(w, k, s); if (m && m.statut !== "fait") setMeal(w, k, s, null); } await composeDays(weekId(k), [k]); }
+    else if (act === "week-off") { weekOff = Math.max(-8, Math.min(2, weekOff + Number(D.v))); render(); }
+    else if (act === "statut") { const w = week(weekId(D.k), true), m = meal(w, D.k, D.slot); if (!m) return; const before = m.statut; m.statut = D.v; if (D.v === "fait") { m.faitLe = new Date().toISOString(); const r = recette(m.flemme && m.secours ? m.secours : m.recette); if (r && S.recettes[r.id]) { r.nbFaits = (r.nbFaits || 0) + 1; saveRecette(r); } } saveSemaine(w, 0); if (D.v === "fait") setPref("lastStreak", streak()); if (D.v === "saute") setPref("lastStreak", streak()); render(); if (D.v === "fait") { hippoCheer(); haptic(); toast("Repas noté.", () => { m.statut = before; saveSemaine(w, 0); render(); }); } }
+    else if (act === "flemme") { const w = week(weekId(D.k), true), m = meal(w, D.k, "soir"); if (!m) return; m.flemme = D.v === "1"; saveSemaine(w); render(); }
+    else if (act === "recipe") dlgRecipe(D.id, D.k, D.slot);
+    else if (act === "other") dlgOther(D.k, D.slot);
+    else if (act === "choose") { const w = week(weekId(D.k), true), m = meal(w, D.k, D.slot) || { secours: rulePick("secours", new Set(), false)?.id || null, statut: "prevu", flemme: false }; m.recette = D.id; m.statut = "prevu"; setMeal(w, D.k, D.slot, m); saveSemaine(w, 0); render(); toast("Repas remplacé."); }
+    else if (act === "swap") { const w = week(weekId(D.k), true), a = meal(w, D.k, D.slot), b = meal(w, D.with, D.slot); if (!a || !b) return; [a.recette, b.recette] = [b.recette, a.recette]; [a.secours, b.secours] = [b.secours, a.secours]; saveSemaine(w, 0); render(); toast("Repas échangés."); }
+    else if (act === "avis") { const r = recette(D.id); if (!r) return; const next = r.avis === D.v ? null : D.v; const stored = S.recettes[r.id] ? r : Object.assign(clone(r), { source: "base" }); stored.avis = next; saveRecette(stored); if (next === "jamais") toast("Cette recette ne sera plus proposée."); dlgRecipe(D.id, D.k, D.slot); render(); }
+    else if (act === "adopt-unknown") { const r = recette(D.id); let n = 0; for (const i of r.ing || []) if (i.inconnu) { const id = "x-" + slug(i.nom); if (!S.aliments[id]) { saveAliment({ id, nom: i.nom, cat: "autre", rayon: "epi", verdict: "ok", essais: [] }); n++; } i.a = id; delete i.inconnu; } if (S.recettes[r.id]) saveRecette(r); toast(`${plural(n, "aliment")} ajouté${n > 1 ? "s" : ""} en « ça va ».`); dlgRecipe(D.id, D.k, D.slot); render(); }
+    else if (act === "coche") { const w = w0(); const it = (w.courses?.items || []).find(i => i.k === D.k); if (!it) return; it.coche = !it.coche; haptic(); saveSemaine(w); render(); }
+    else if (act === "placard") { const p = new Set(cfg().placard || []); p.has(D.k) ? p.delete(D.k) : p.add(D.k); cfg().placard = [...p]; saveConfig(); render(); }
+    else if (act === "regen-shop") { const w = week(D.monday || mondayOf(today()), true); buildCourses(w); saveSemaine(w, 0); tab = "shop"; setPref("tab", tab); render(); toast("Liste refaite."); }
+    else if (act === "copy-shop") copyText(coursesText(w0()), "Liste copiée.");
+    else if (act === "rappels") { const t = coursesText(w0()); if (!t) return toast("Rien à envoyer."); const w = w0(); w.courses.envoyeeLe = new Date().toISOString(); saveSemaine(w); runShortcut(cfg().raccourciCourses || "Courses", t); }
+    else if (act === "sort-start") { sorting = true; render(); }
+    else if (act === "sort-stop") { sorting = false; if (alimentsList().length >= 12 && !cfg().onboardingFait) { cfg().onboardingFait = true; saveConfig(); } render(); }
+    else if (act === "sort-skip") { sortSkip.add(D.id); render(); }
+    else if (act === "sort") { const c = CAT_BY_ID[D.id]; saveAliment({ id: c.id, nom: c.nom, cat: c.cat, rayon: c.rayon, verdict: D.v, essais: [] }); haptic(); if (!unsorted().length) { sorting = false; cfg().onboardingFait = true; saveConfig(); toast("Tout est trié. Tu peux composer la semaine."); } render(); }
+    else if (act === "rep-v") { repV = D.v; render(); }
+    else if (act === "rep-cat") { repCat = D.v; render(); }
+    else if (act === "aliment") dlgAliment(D.id);
+    else if (act === "verdict") { const a = S.aliments[D.id]; if (!a) return; a.verdict = D.v; saveAliment(a); dlgAliment(D.id); render(); }
+    else if (act === "save-aliment") { const a = S.aliments[D.id]; if (!a) return; a.notes = ($("#al-notes")?.value || "").trim().slice(0, 80); saveAliment(a); render(); }
+    else if (act === "del-aliment") { const a = S.aliments[D.id]; persist("aliments", D.id, null); render(); toast("Retiré.", () => { saveAliment(a); render(); }); }
+    else if (act === "unsort") { const a = S.aliments[D.id]; persist("aliments", D.id, null); render(); toast("Remis dans les cartes.", () => { saveAliment(a); render(); }); }
+    else if (act === "add-aliment") dlgAddAliment();
+    else if (act === "add-aliment-go") { const nom = ($("#na-nom").value || "").trim(); if (nom.length < 2) return void ($("#na-err").textContent = "Donne un nom."); const id = "x-" + slug(nom); if (S.aliments[id]) return void ($("#na-err").textContent = "Déjà dans le répertoire."); saveAliment({ id, nom, cat: $("#na-cat").value, rayon: $("#na-rayon").value, verdict: D.v, essais: [] }); dlg.close(); render(); toast(`${nom} ajouté.`); }
+    else if (act === "essai") { const w = w0(); const e = w.essai; if (!e) return; const a = S.aliments[e.aliment]; if (!a) return; a.essais ||= []; a.essais.push({ date: e.date, prep: e.prep, resultat: D.v }); if (D.v === "adopte") a.verdict = "ok"; else if (D.v === "jamais") a.verdict = "jamais"; e.resultat = D.v; saveAliment(a); saveSemaine(w, 0); render(); if (D.v === "adopte") { hippoCheer(); toast(`${a.nom} adopté. Un de plus au répertoire.`); } else toast(D.v === "jamais" ? "Noté : on n'insistera pas." : "Noté : on retentera autrement."); }
+    else if (act === "essai-move") dlgEssaiMove();
+    else if (act === "essai-date") { const w = w0(); if (w.essai) { w.essai.date = D.k; saveSemaine(w, 0); render(); } }
+    else if (act === "essai-swap") { const w = w0(); const cur = w.essai?.aliment; const cands = alimentsList().filter(a => a.verdict === "essai" && a.id !== cur); if (!cands.length) return toast("Pas d'autre aliment « à essayer »."); const a = rnd(cands); w.essai = Object.assign(w.essai || {}, { aliment: a.id, prep: ESSAI_PREP[a.cat] || ESSAI_PREP.autre, pourquoi: "", resultat: null, date: w.essai?.date || addDays(w.id, 6) }); saveSemaine(w, 0); render(); }
+    else if (act === "toggle-ru") { const s = new Set(cfg().midiRU || []); const v = Number(D.v); s.has(v) ? s.delete(v) : s.add(v); cfg().midiRU = [...s]; saveConfig(); renderSettings(); }
+    else if (act === "save-settings") { const c = cfg(); c.equipement = [...app.querySelectorAll('input[data-set="equip"]:checked')].map(i => i.value); c.budgetSemaine = Math.max(10, Math.min(150, Number($("#st-budget").value) || 35)); c.magasin = ($("#st-magasin").value || "").trim().slice(0, 40); c.raccourciCourses = ($("#st-raccourci").value || "Courses").trim().slice(0, 40); c.essaiParSemaine = Number($("#st-essai").value) ? 1 : 0; saveConfig(); closeSettings(); render(); toast("Réglages enregistrés."); }
+    else if (act === "signout") { await api.signOut(); S.session = null; viewLogin(); }
+    else if (act === "copy-secret") { const sec = await api.secret(); if (!sec) return toast("Clé introuvable : exécute supabase/schema.sql."); copyText(sec, "Clé copiée. Colle-la dans Claude Code."); }
+    else if (act === "export") copyText(JSON.stringify({ config: S.config, aliments: S.aliments, recettes: S.recettes, semaines: S.semaines }, null, 1), "Export copié.");
+    else if (act === "import") openDlg(`<h1>Importer</h1><p class="sub">Colle un export JSON de Popote. Les documents importés remplacent ceux qui ont le même identifiant.</p><textarea id="imp"></textarea><p class="err" id="imp-err"></p><div class="acts"><button class="btn wide" data-act="import-go">Importer</button></div>`);
+    else if (act === "import-go") { let d; try { d = JSON.parse($("#imp").value); } catch { return void ($("#imp-err").textContent = "JSON invalide."); } if (d.config) { S.config = Object.assign(clone(DEFAULT_CONFIG), d.config); saveConfig(); } let n = 0; for (const coll of ["aliments", "recettes", "semaines"]) for (const [id, o] of Object.entries(d[coll] || {})) { persist(coll, id, o); n++; } dlg.close(); render(); toast(`${plural(n, "document")} importé${n > 1 ? "s" : ""}.`); }
+  } catch (err) { console.error(err); toast(err?.message || String(err), null, 4000); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !dlg.open && tab === "settings") closeSettings(); });
+setInterval(() => { if (tab === "home") render(); }, 60000);
+
+// ───────────── Connexion et démarrage ─────────────
+function viewLogin(msg = "") {
+  tabsEl.hidden = true;
+  app.innerHTML = `<section class="view" style="max-width:420px;margin:0 auto;padding-top:10vh"><h1 style="font-size:30px;font-weight:800;margin-bottom:6px">Popote</h1><p class="quiet">Connecte-toi avec le compte de Pages contre minutes.</p><form id="login"><label for="em">Email</label><input id="em" type="email" autocomplete="username" required><label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required><p class="err">${esc(msg)}</p><button class="btn wide" style="margin-top:14px">Se connecter</button></form></section>`;
+  $("#login").onsubmit = async e => { e.preventDefault(); const btn = $("#login button"); btn.disabled = true; try { await api.signIn($("#em").value.trim(), $("#pw").value); await start(); } catch (err) { viewLogin(/invalid/i.test(err.message) ? "Email ou mot de passe incorrect." : err.message); } };
+}
+async function start() {
+  S.session = await api.session(); if (!S.session) return viewLogin();
+  tabsEl.hidden = false; render(); await loadAll(); flush();
+}
+async function boot() {
+  mirrorLoad();
+  if (DEMO) { S.loaded = true; banner.textContent = "Mode local : les données restent dans ce navigateur."; banner.hidden = false; render(); return; }
+  await start();
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && api && S.session) { loadAll(); flush(); } });
+window.addEventListener("online", () => flush());
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+boot();
+})();
+</script>
+</body>
+</html>
