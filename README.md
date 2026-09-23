@@ -31,6 +31,7 @@ Table `popote_docs (coll, id, data jsonb)`, un document par ligne, protégée pa
 | `config` | `main` | équipement, jours au RU (`midiRU`), budget, magasin, nom du raccourci, placard, essai par semaine |
 | `aliments` | id du catalogue ou `x-…` | `{nom, cat, rayon, verdict, notes, essais[]}` |
 | `recettes` | `c-…` (Claude) ou `b-…`/`s-…` (avis sur une recette de base) | `{nom, mode:'recette'|'secours', minutes, equipement[], ing:[{a, q, u, opt}], etapes[], source, avis, nbFaits}` |
+| `stock` | `main` | `{items:{<alimentId>:{depuis}}}` : ce qu'il a au frigo et au placard en ce moment (le frais expire après 8 jours, le reste après 90). Les menus s'en servent d'abord, la liste de courses le retire, cocher un article acheté l'y ajoute |
 | `semaines` | lundi ISO | `{jours:{date:{midi?, soir:{recette, secours, statut, flemme}}}, essai, courses:{items[]}, resume, source}` |
 
 La page garde un miroir dans `localStorage` (`popote-mirror`) et une file d'attente hors ligne (`pop:outbox`) : les modifications faites sans réseau partent au retour.
@@ -41,7 +42,7 @@ La page garde un miroir dans `localStorage` (`popote-mirror`) et une file d'atte
 python3 tools/popote_db.py dump
 ```
 
-donne tout (répertoire, recettes, semaines). Claude compose ensuite les repas selon les règles de l'app (aliments adore/ok seulement, jamais un « jamais », un seul essai, assiette protéine + féculent + légume ou fruit, ≤ 30 min, secours ≤ 10 min, équipement de `config/main`), écrit les nouvelles recettes (`c-<slug>`, ingrédients avec `a` = id d'aliment du répertoire ou `placard:true`) et la semaine (`source:"claude"`, `resume`), puis :
+donne tout (répertoire, recettes, semaines). Claude compose ensuite les repas selon les règles de l'app (aliments adore/ok seulement, jamais un « jamais », un seul essai, assiette protéine + féculent + légume ou fruit, ≤ 30 min, secours ≤ 10 min, équipement de `config/main`, et en priorité ce qu'il a déjà dans `stock/main`), écrit les nouvelles recettes (`c-<slug>`, ingrédients avec `a` = id d'aliment du répertoire ou `placard:true`) et la semaine (`source:"claude"`, `resume`), puis :
 
 ```bash
 python3 tools/popote_db.py put /chemin/semaine.json
