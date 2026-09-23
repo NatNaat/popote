@@ -22,6 +22,7 @@
   --accent: #4A4670; --accent-ink: #FFFFFF; --accent-soft: #E4E1F2; --focus: #4A4670;
   --ok: #3E7C5C; --ok-soft: #E1EFE7; --warn: #B8862B; --warn-soft: #F5ECD6; --bad: #B9503F; --bad-soft: #F6E1DD; --pink: #E79AA8; --teal: #2F7A86; --teal-soft: #DCEEF0; --plum: #8A4A7A; --plum-soft: #F1E3EE;
   --hp: #8C88A8; --hp2: #B4B0CC; --hp3: #6A6686; --hpk: #1A1D1B; --hpp: #E79AA8; --hpg: #E3B341; --hpg2: #B5862A;
+  --wall: #E4E1F2; --fridge: #FBFAFD; --cup: #CFC9E4; --counter: #8C88A8; --counter-2: #6A6686;
   --display: "Bricolage Grotesque", "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
   --body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --r: 16px; --tab: 64px; --ease: cubic-bezier(.2, .8, .2, 1);
@@ -29,11 +30,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
   --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; } }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; --wall: #2E2B3F; --fridge: #C5C2D6; --cup: #8C88A8; --counter: #6A6686; --counter-2: #3E3B50; } }
 :root[data-theme="dark"] { color-scheme: dark;
   --bg: #15141B; --surface: #1D1C25; --surface-2: #282633; --ink: #EDECF3; --ink-2: #C5C2D6; --muted: #918EA6; --line: #312F3E; --line-strong: #4B4860;
   --accent: #B4B0CC; --accent-ink: #15141B; --accent-soft: #2E2B3F; --focus: #B4B0CC;
-  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
+  --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; --wall: #2E2B3F; --fridge: #C5C2D6; --cup: #8C88A8; --counter: #6A6686; --counter-2: #3E3B50; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; background: var(--bg); overscroll-behavior-y: none; }
@@ -63,10 +64,10 @@ main > * { max-width: 620px; margin-left: auto; margin-right: auto; }
 @keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
 .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font: 600 14px var(--body); color: var(--accent); margin-left: -6px; }
 nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 2px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
-nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
-nav.tabs button { display: grid; justify-items: center; gap: 3px; min-height: var(--tab); padding-top: 8px; font: 600 11.5px var(--body); color: var(--muted); border-radius: 0; position: relative; }
+nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
+nav.tabs button { display: grid; justify-items: center; gap: 3px; min-height: var(--tab); padding-top: 8px; font: 600 11px var(--body); color: var(--muted); border-radius: 0; position: relative; }
 nav.tabs button[aria-current="page"] { color: var(--accent); } nav.tabs button[aria-current="page"] svg.i { background: var(--accent-soft); }
-nav.tabs svg.i { width: 40px; height: 30px; padding: 4px 9px; border-radius: 10px; stroke-width: 2.1; overflow: visible; }
+nav.tabs svg.i { width: 38px; height: 30px; padding: 4px 8px; border-radius: 10px; stroke-width: 2.1; overflow: visible; }
 nav.tabs .cnt { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 11px/18px var(--display); text-align: center; }
 section.view { animation: fadein .25s ease both; } @keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
 #banner { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 16px; right: 16px; z-index: 40; max-width: 620px; margin: 0 auto; box-shadow: 0 4px 14px rgba(20,18,30,.25); padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
@@ -145,8 +146,19 @@ input[type=checkbox] { width: 22px; height: 22px; padding: 0; margin: 0; accent-
 .rayon.r-fl h3::before { background: var(--ok); } .rayon.r-boul h3::before { background: var(--warn); } .rayon.r-bch h3::before { background: var(--bad); } .rayon.r-crem h3::before { background: var(--teal); } .rayon.r-epi h3::before { background: var(--plum); } .rayon.r-surg h3::before { background: var(--accent); } .rayon.r-bois h3::before { background: var(--pink); }
 .slot { border-left-width: 5px; border-left-color: var(--line-strong); } .slot.prevu { border-left-color: var(--accent); } .slot.fait { border-left-color: var(--ok); } .slot.flemme { border-left-color: var(--warn); } .slot.saute { border-left-color: var(--line); }
 .day.today .dn b { color: var(--pink); }
-nav.tabs button[aria-current="page"][data-tab="home"] svg.i { background: var(--pink); color: #1D1B26; } nav.tabs button[aria-current="page"][data-tab="week"] svg.i { background: var(--teal-soft); color: var(--teal); } nav.tabs button[aria-current="page"][data-tab="shop"] svg.i { background: var(--ok-soft); color: var(--ok); } nav.tabs button[aria-current="page"][data-tab="rep"] svg.i { background: var(--plum-soft); color: var(--plum); }
+nav.tabs button[aria-current="page"][data-tab="home"] svg.i { background: var(--pink); color: #1D1B26; } nav.tabs button[aria-current="page"][data-tab="week"] svg.i { background: var(--teal-soft); color: var(--teal); } nav.tabs button[aria-current="page"][data-tab="kitchen"] svg.i { background: var(--warn-soft); color: var(--warn); } nav.tabs button[aria-current="page"][data-tab="shop"] svg.i { background: var(--ok-soft); color: var(--ok); } nav.tabs button[aria-current="page"][data-tab="rep"] svg.i { background: var(--plum-soft); color: var(--plum); }
 nav.tabs button[aria-current="page"] { color: var(--ink); }
+
+/* ───── Cuisine : scène en pixels, frigo et placard cliquables ───── */
+.kitchen { position: relative; aspect-ratio: 32 / 20; border-radius: var(--r); overflow: hidden; border: 2px solid var(--line); margin-bottom: 12px; background: var(--wall); }
+.kitchen > svg { position: absolute; inset: 0; width: 100%; height: 100%; shape-rendering: crispEdges; display: block; }
+.kitchen .hot { position: absolute; background: transparent; border-radius: 6px; } .kitchen .hot:active { background: rgba(255,255,255,.12); }
+.kitchen .hot.fridge { left: 6.25%; top: 15%; width: 25%; height: 65%; } .kitchen .hot.cup { left: 62.5%; top: 15%; width: 31.25%; height: 40%; }
+.kitchen .hot b { position: absolute; right: -6px; top: -8px; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font: 700 12px/24px var(--display); text-align: center; box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.kitchen .hot span { position: absolute; left: 0; right: 0; bottom: -2px; } .kitchen .hot.cup span { bottom: -20px; text-align: center; font: 700 11px var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.kitchen .hp-unit { position: absolute; left: 41%; bottom: 25%; width: 19%; }
+.kitchen .hp-unit svg { animation-duration: 3.2s; }
+.soon { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ───── Semaine ───── */
 .weeknav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; } .weeknav h2 { font-size: 18px; } .weeknav button.nav { width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; } .weeknav button.nav svg.i { width: 18px; height: 18px; }
@@ -237,6 +249,7 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 <nav class="tabs" id="tabs" aria-label="Sections"><div>
   <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Ce soir</button>
   <button data-tab="week"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Semaine</button>
+  <button data-tab="kitchen"><svg class="i" viewBox="0 0 24 24"><path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h20M9 6.5c0-1 1-1 1-2M14 6.5c0-1 1-1 1-2"/></svg>Cuisine</button>
   <button data-tab="shop"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 8H6.2"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17.5" cy="20" r="1.2"/></svg>Courses<span class="cnt" id="shopcnt" hidden></span></button>
   <button data-tab="rep"><svg class="i" viewBox="0 0 24 24"><path d="M5 3v18M5 3h11a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5"/><path d="M9 8h6M9 12h6"/></svg>Répertoire</button>
 </div></nav>
@@ -370,7 +383,7 @@ const today = () => todayKey();
 const LS = "popote-mirror";
 const DEMO = new URLSearchParams(location.search).has("demo") || !window.POPOTE_CONFIG?.supabaseUrl || !window.supabase;
 function mirrorSave() { try { localStorage.setItem(LS, JSON.stringify({ config: S.config, aliments: S.aliments, recettes: S.recettes, semaines: S.semaines, stock: S.stock, t: Date.now() })); } catch {} }
-function mirrorLoad() { try { const m = JSON.parse(localStorage.getItem(LS) || "null"); if (!m) return false; S.config = Object.assign(clone(DEFAULT_CONFIG), m.config || {}); S.aliments = m.aliments || {}; S.recettes = m.recettes || {}; S.semaines = m.semaines || {}; S.stock = m.stock || {}; return true; } catch { return false; } }
+function mirrorLoad() { try { const m = JSON.parse(localStorage.getItem(LS) || "null"); if (!m) return false; S.config = Object.assign(clone(DEFAULT_CONFIG), m.config || {}); delete S.config.main; S.aliments = m.aliments || {}; S.recettes = m.recettes || {}; S.semaines = m.semaines || {}; S.stock = m.stock || {}; return true; } catch { return false; } }
 function diagLog(kind, info) { const e = { at: new Date().toISOString(), kind, info: typeof info === "string" ? info : JSON.stringify(info).slice(0, 400) }; S.diag.errors.push(e); if (S.diag.errors.length > 12) S.diag.errors.shift(); console.warn("[popote]", kind, info); }
 const api = DEMO ? null : (() => { const cfg = window.POPOTE_CONFIG; const sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey); const all = async q => { const { data, error } = await q; if (error) throw error; return data; };
   return { session: async () => (await sb.auth.getSession()).data.session, signIn: async (email, password) => { const { error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; }, signOut: () => sb.auth.signOut(),
@@ -382,7 +395,8 @@ const api = DEMO ? null : (() => { const cfg = window.POPOTE_CONFIG; const sb = 
 let outbox = pref("outbox", {}), flushTimer = null;
 const outKey = (coll, id) => coll + "/" + id;
 function persist(coll, id, obj) {
-  if (obj === null) delete S[coll][id]; else { obj.id = id; S[coll][id] = obj; }
+  if (coll === "config") { obj.id = id; delete obj.main; S.config = obj; }
+  else if (obj === null) delete S[coll][id]; else { obj.id = id; S[coll][id] = obj; }
   mirrorSave(); outbox[outKey(coll, id)] = { coll, id, data: obj === null ? null : clone(obj) }; setPref("outbox", outbox);
   clearTimeout(flushTimer); flushTimer = setTimeout(flush, 500);
 }
@@ -405,7 +419,7 @@ async function loadAll() {
   try { const rows = await api.load(); const next = { config: null, aliments: {}, recettes: {}, semaines: {}, stock: {} };
     for (const r of rows) { if (outbox[outKey(r.coll, r.id)]) continue; if (r.coll === "config" && r.id === "main") next.config = r.data; else if (next[r.coll]) next[r.coll][r.id] = Object.assign({ id: r.id }, r.data); }
     for (const o of Object.values(outbox)) { if (o.data === null) continue; if (o.coll === "config") next.config = o.data; else if (next[o.coll]) next[o.coll][o.id] = o.data; }   // les documents en attente gardent leur version locale
-    S.config = Object.assign(clone(DEFAULT_CONFIG), next.config || {}); S.aliments = next.aliments; S.recettes = next.recettes; S.semaines = next.semaines; S.stock = next.stock; S.loaded = true; mirrorSave(); render(); }
+    S.config = Object.assign(clone(DEFAULT_CONFIG), next.config || {}); delete S.config.main; S.aliments = next.aliments; S.recettes = next.recettes; S.semaines = next.semaines; S.stock = next.stock; S.loaded = true; mirrorSave(); render(); }
   catch (e) { diagLog("load", e?.message || e); toast("Base injoignable : copie locale affichée."); }
 }
 
@@ -553,7 +567,7 @@ const stTag = m => !m ? "" : m.statut === "fait" ? `<span class="tag ok">${ICON.
 function render() {
   tabsEl.querySelectorAll("button").forEach(b => b.dataset.tab === tab ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
   const open = shopOpen(week(weekId(today()))).length; const c = $("#shopcnt"); c.hidden = !open; c.textContent = open;
-  const y = window.scrollY; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); window.scrollTo(0, render.lastTab === tab ? y : 0); render.lastTab = tab;
+  const y = window.scrollY; app.innerHTML = ({ home: viewHome, week: viewWeek, kitchen: viewKitchen, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); window.scrollTo(0, render.lastTab === tab ? y : 0); render.lastTab = tab;
   document.querySelectorAll(".bar i[data-p]").forEach(el => requestAnimationFrame(() => { el.style.transform = `scaleX(${el.dataset.p})`; }));
 }
 function mealActions(w, k, slot, m) {
@@ -593,6 +607,25 @@ function viewHome() {
     ${body}
     <dl class="kpis"><div><dt>Série</dt><dd>${plural(st, "soir")}</dd></div><div><dt>Cette semaine</dt><dd>${plural(faitsSemaine(weekId(k)), "repas")}</dd></div><div><dt>Adoptés</dt><dd>${adoptes().length}</dd></div></dl></section>`;
 }
+function kitchenSVG() {
+  const px = (x, y, c, w = 1, h = 1) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`; let o = "";
+  o += px(0, 15, "var(--counter-2)", 32, 1) + px(0, 16, "var(--counter)", 32, 4) + px(0, 18, "var(--counter-2)", 32, 1);   // plan de travail et façade
+  o += px(2, 3, "var(--counter-2)", 8, 13) + px(3, 4, "var(--fridge)", 6, 4) + px(3, 9, "var(--fridge)", 6, 6) + px(7, 5, "var(--counter-2)", 1, 2) + px(7, 10, "var(--counter-2)", 1, 3);   // frigo : congélateur en haut, porte en bas
+  o += px(20, 3, "var(--counter-2)", 10, 8) + px(21, 4, "var(--cup)", 4, 6) + px(25, 4, "var(--cup)", 4, 6) + px(24, 7, "var(--counter-2)", 1, 2) + px(25, 7, "var(--counter-2)", 1, 2);   // placard mural à deux portes
+  o += px(23, 12, "var(--accent)", 4, 1) + px(22, 13, "var(--accent)", 6, 2) + px(24, 11, "var(--counter-2)", 2, 1) + px(24, 9, "var(--hpp)") + px(26, 8, "var(--hpp)");   // la marmite sur le plan, avec sa vapeur
+  o += px(30, 13, "var(--ok)", 1, 2) + px(29, 12, "var(--ok)", 1, 1) + px(31, 12, "var(--hpp)", 1, 1);   // une pousse dans un coin, pour la vie
+  return `<svg viewBox="0 0 32 20" aria-hidden="true">${o}</svg>`;
+}
+const FRIDGE_RAYONS = new Set(["fl", "bch", "crem", "boul", "surg"]);
+const stockOf = kind => Object.keys(stockItems()).filter(id => FRIDGE_RAYONS.has(alimentRayon(id)) === (kind === "frigo"));
+function viewKitchen() {
+  const st = stockItems(); const soon = Object.keys(st).filter(id => FRESH.has(alimentRayon(id)) && stockAge(id) >= 5).sort((a, b) => stockAge(b) - stockAge(a));
+  const mood = hippoMood();
+  return `<section class="view"><div class="topbar"><h1>Cuisine</h1>${GEAR}</div>
+    <div class="kitchen">${kitchenSVG()}<button class="hot fridge" data-act="stock" data-kind="frigo" aria-label="Ouvrir le frigo"><b>${stockOf("frigo").length}</b><span>Frigo</span></button><button class="hot cup" data-act="stock" data-kind="placard" aria-label="Ouvrir le placard"><b>${stockOf("placard").length}</b><span>Placard</span></button><button class="hp-unit toque ${mood.cls}" data-act="poke" aria-label="L'hippo">${hippoSVG()}</button></div>
+    ${soon.length ? `<div class="card flat"><h2>À manger bientôt</h2><div class="soon">${soon.map(id => `<span class="chip wrap old">${esc(alimentName(id))} <small class="muted">${stockAge(id)} j</small></span>`).join("")}</div></div>` : ""}
+    <button class="pick" data-act="tab" data-tab="shop"><b>Courses</b><small>${plural(shopOpen(week(weekId(today()))).length, "article")} à prendre</small>${ICON.right}</button></section>`;
+}
 function viewWeek() {
   const monday = addDays(mondayOf(today()), weekOff * 7), w = week(monday), days = weekDays(monday), k0 = today();
   const remaining = days.filter(k => k >= k0 && slots(k).some(s => !meal(w, k, s) || meal(w, k, s).statut === "prevu"));
@@ -601,7 +634,7 @@ function viewWeek() {
     <div class="weeknav"><button class="nav" data-act="week-off" data-v="-1" aria-label="Semaine précédente">${ICON.left}</button><h2>${esc(fmtDay(monday))} → ${esc(fmtDay(addDays(monday, 6)))}${weekOff === 0 ? "" : weekOff === 1 ? " · prochaine" : ""}</h2><button class="nav" data-act="week-off" data-v="1" aria-label="Semaine suivante">${ICON.right}</button></div>
     ${w?.resume ? `<p class="resume">${esc(w.resume)}</p>` : ""}
     ${weekOff >= 0 ? (!w || !days.some(k => slots(k).some(s => meal(w, k, s))) ? `<button class="btn wide" data-act="compose-week" data-monday="${monday}">Composer ${weekOff ? "la semaine prochaine" : "ma semaine"}</button>` : remaining.length ? `<div class="row"><button class="btn ghost sm" data-act="compose-rest" data-monday="${monday}">Recomposer la suite</button><button class="btn ghost sm" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></div>` : "") : ""}
-    <p class="note" style="margin:10px 0 0">Frigo : ${plural(stockCount(), "article")} · <button class="link" data-act="stock" style="min-height:0">Mettre à jour</button></p>
+    <p class="note" style="margin:10px 0 0">Cuisine : ${plural(stockCount(), "article")} chez toi · <button class="link" data-act="tab" data-tab="kitchen" style="min-height:0">Ouvrir</button></p>
     <div class="card" style="margin-top:12px">${rows}</div>
     ${essaiCard(w)}${w?.essai?.resultat ? `<p class="quiet">Essai de la semaine : ${esc(alimentName(w.essai.aliment))} → ${w.essai.resultat === "adopte" ? "adopté" : w.essai.resultat === "jamais" ? "jamais" : "à refaire autrement"}.</p>` : ""}</section>`;
 }
@@ -615,7 +648,7 @@ function viewShop() {
     <div class="progress"><span>${done}/${todo.length}</span><div class="bar"><i data-p="${todo.length ? done / todo.length : 0}"></i></div></div>
     <div class="row" style="margin-bottom:14px"><button class="btn ghost sm" data-act="copy-shop">${ICON.copy} Copier</button><button class="btn ghost sm" data-act="rappels">Envoyer dans Rappels</button></div>
     ${RAYON_ORDER.filter(r => by[r]).map(r => `<div class="rayon r-${r}"><h3>${RAYONS[r]}</h3>${by[r].map(row).join("")}</div>`).join("")}
-    <div class="card flat"><div class="lead"><h2>Frigo et placard</h2><span class="tag">${plural(stockCount(), "article")}</span></div><div class="row"><button class="btn ghost sm" data-act="stock">Mettre à jour</button><button class="btn ghost sm" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></div>${placardItems.length ? `<p class="note">Déjà là : ${placardItems.map(i => esc(i.nom)).join(", ")}.</p>` : ""}</div></section>`;
+    <button class="pick" data-act="tab" data-tab="kitchen"><b>Cuisine</b><small>${plural(stockCount(), "article")} chez toi</small>${ICON.right}</button>${placardItems.length ? `<p class="note">Déjà là : ${placardItems.map(i => esc(i.nom)).join(", ")}.</p>` : ""}<button class="link" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></section>`;
 }
 function viewRep() {
   const rest = unsorted(); const w = week(mondayOf(today())); if (!alimentsList().length && rest.length) sorting = true;
@@ -677,13 +710,18 @@ function dlgAddAliment() {
     <label for="na-nom">Nom</label><input id="na-nom" maxlength="60" placeholder="Ex. : cordon bleu de dinde"><label for="na-cat">Catégorie</label><select id="na-cat">${Object.entries(CATS).map(([c, l]) => `<option value="${c}">${l}</option>`).join("")}</select><label for="na-rayon">Rayon</label><select id="na-rayon">${RAYON_ORDER.map(r => `<option value="${r}">${RAYONS[r]}</option>`).join("")}</select><label>Verdict</label>
     <div class="verdicts" style="margin-top:0">${Object.entries(VERDICTS).map(([v, d]) => `<button class="btn vb-${v}" data-act="add-aliment-go" data-v="${v}"><i>${d.ico}</i>${d.lbl}</button>`).join("")}</div><p class="err" id="na-err"></p>`);
 }
-function dlgStock() {
-  const items = alimentsList().filter(a => stockable(a.id)).sort((x, y) => x.nom.localeCompare(y.nom, "fr")); const st = stockItems();
-  const groups = Object.keys(CATS).map(c => [c, items.filter(a => a.cat === c)]).filter(([, l]) => l.length);
-  const basics = [...new Set([...items.filter(a => CAT_BY_ID[a.id]?.stock).map(a => a.id), ...(cfg().placard || [])])].filter(id => S.aliments[id]);
-  openDlg(`<div id="stock-sheet"><div class="jhead" style="display:flex;justify-content:space-between;align-items:baseline"><h1>Frigo et placard</h1><button class="link" data-act="stock-clear" style="min-height:0">Tout vider</button></div><p class="sub">Ce que tu as en ce moment.</p>
-    <div class="stockgrid">${groups.map(([c, l]) => `<div><h3>${CATS[c]}</h3><div class="chipwrap">${l.map(a => `<button class="chip wrap${st[a.id] && stockAge(a.id) >= 5 && FRESH.has(a.rayon) ? " old" : ""}" data-act="stock-toggle" data-id="${a.id}" aria-pressed="${!!st[a.id]}">${esc(a.nom)}${st[a.id] && stockAge(a.id) ? ` <small>${stockAge(a.id)} j</small>` : ""}</button>`).join("")}</div></div>`).join("")}
-    <div><h3>Toujours à la maison</h3><div class="chipwrap">${basics.map(id => `<button class="chip wrap" data-act="placard" data-k="${esc(id)}" aria-pressed="${(cfg().placard || []).includes(id)}">${esc(alimentName(id))}</button>`).join("")}</div></div></div>`);
+function dlgStock(kind = "frigo") {
+  const frigo = kind === "frigo"; const st = stockItems();
+  const items = alimentsList().filter(a => stockable(a.id) && FRIDGE_RAYONS.has(a.rayon) === frigo).sort((x, y) => x.nom.localeCompare(y.nom, "fr"));
+  const chip = a => `<button class="chip wrap${st[a.id] && stockAge(a.id) >= 5 && FRESH.has(a.rayon) ? " old" : ""}" data-act="stock-toggle" data-id="${a.id}" data-kind="${kind}" aria-pressed="${!!st[a.id]}">${esc(a.nom)}${st[a.id] && stockAge(a.id) ? ` <small>${stockAge(a.id)} j</small>` : ""}</button>`;
+  let groups;
+  if (frigo) groups = [...Object.keys(CATS).map(c => [CATS[c], items.filter(a => a.cat === c && a.rayon !== "surg")]), ["Congélateur", items.filter(a => a.rayon === "surg")]];
+  else groups = Object.keys(CATS).map(c => [CATS[c], items.filter(a => a.cat === c)]);
+  groups = groups.filter(([, l]) => l.length);
+  const basics = frigo ? [] : [...new Set([...items.filter(a => CAT_BY_ID[a.id]?.stock).map(a => a.id), ...(cfg().placard || [])])].filter(id => S.aliments[id] && !FRIDGE_RAYONS.has(alimentRayon(id)));
+  openDlg(`<div id="stock-sheet"><div style="display:flex;justify-content:space-between;align-items:baseline"><h1>${frigo ? "Frigo" : "Placard"}</h1><button class="link" data-act="stock-clear" data-kind="${kind}" style="min-height:0">Tout vider</button></div><p class="sub">${plural(stockOf(kind).length, "article")} en ce moment.</p>
+    <div class="stockgrid">${groups.map(([t, l]) => `<div><h3>${t}</h3><div class="chipwrap">${l.map(chip).join("")}</div></div>`).join("")}
+    ${basics.length ? `<div><h3>Toujours à la maison</h3><div class="chipwrap">${basics.map(id => `<button class="chip wrap" data-act="placard" data-k="${esc(id)}" aria-pressed="${(cfg().placard || []).includes(id)}">${esc(alimentName(id))}</button>`).join("")}</div></div>` : ""}</div></div>`);
 }
 function dlgEssaiMove() { const w = week(mondayOf(today())); if (!w?.essai) return; const days = weekDays(w.id).filter(k => k >= today()); openDlg(`<h1>Décaler l'essai</h1>${days.map(k => `<button class="pick" data-act="essai-date" data-k="${k}" data-close><b>${esc(fmtDay(k, true))}</b><small>${esc(recette(meal(w, k, "soir")?.recette)?.nom || "rien de prévu")}</small></button>`).join("")}`); }
 
@@ -711,7 +749,7 @@ function viewSettings() {
 
 // ───────────── Actions ─────────────
 tabsEl.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) { tab = b.dataset.tab; setPref("tab", tab); render(); } });
-if (!["home", "week", "shop", "rep"].includes(tab)) tab = "home";
+if (!["home", "week", "kitchen", "shop", "rep"].includes(tab)) tab = "home";
 document.addEventListener("click", async e => {
   const el = e.target.closest("[data-act]"); if (!el) return; const act = el.dataset.act, D = el.dataset;
   const w0 = () => week(mondayOf(today()), true);
@@ -733,10 +771,10 @@ document.addEventListener("click", async e => {
     else if (act === "avis") { const r = recette(D.id); if (!r) return; const next = r.avis === D.v ? null : D.v; const stored = S.recettes[r.id] ? r : Object.assign(clone(r), { source: "base" }); stored.avis = next; saveRecette(stored); if (next === "jamais") toast("Cette recette ne sera plus proposée."); dlgRecipe(D.id, D.k, D.slot); render(); }
     else if (act === "adopt-unknown") { const r = recette(D.id); let n = 0; for (const i of r.ing || []) if (i.inconnu) { const id = "x-" + slug(i.nom); if (!S.aliments[id]) { saveAliment({ id, nom: i.nom, cat: "autre", rayon: "epi", verdict: "ok", essais: [] }); n++; } i.a = id; delete i.inconnu; } if (S.recettes[r.id]) saveRecette(r); toast(`${plural(n, "aliment")} ajouté${n > 1 ? "s" : ""} en « ça va ».`); dlgRecipe(D.id, D.k, D.slot); render(); }
     else if (act === "coche") { const w = w0(); const it = (w.courses?.items || []).find(i => i.k === D.k); if (!it) return; it.coche = !it.coche; haptic(); saveSemaine(w); if (stockable(it.k)) setStock(it.k, it.coche); render(); }
-    else if (act === "stock") dlgStock();
-    else if (act === "stock-toggle") { setStock(D.id, !inStock(D.id)); haptic(); dlgStock(); render(); }
-    else if (act === "stock-clear") { const d = stockDoc(); d.items = {}; persist("stock", "main", d); dlgStock(); render(); }
-    else if (act === "placard") { const p = new Set(cfg().placard || []); p.has(D.k) ? p.delete(D.k) : p.add(D.k); cfg().placard = [...p]; saveConfig(); if (dlg.open && $("#stock-sheet")) dlgStock(); render(); }
+    else if (act === "stock") { if (D.kind) dlgStock(D.kind); else { tab = "kitchen"; setPref("tab", tab); render(); } }
+    else if (act === "stock-toggle") { setStock(D.id, !inStock(D.id)); haptic(); dlgStock(D.kind); render(); }
+    else if (act === "stock-clear") { const d = stockDoc(); d.items = Object.fromEntries(Object.entries(stockItems()).filter(([id]) => FRIDGE_RAYONS.has(alimentRayon(id)) !== (D.kind === "frigo"))); persist("stock", "main", d); dlgStock(D.kind); render(); }
+    else if (act === "placard") { const p = new Set(cfg().placard || []); p.has(D.k) ? p.delete(D.k) : p.add(D.k); cfg().placard = [...p]; saveConfig(); if (dlg.open && $("#stock-sheet")) dlgStock("placard"); render(); }
     else if (act === "regen-shop") { const w = week(D.monday || mondayOf(today()), true); buildCourses(w); saveSemaine(w, 0); tab = "shop"; setPref("tab", tab); render(); toast("Liste refaite."); }
     else if (act === "copy-shop") copyText(coursesText(w0()), "Liste copiée.");
     else if (act === "rappels") { const t = coursesText(w0()); if (!t) return toast("Rien à envoyer."); const w = w0(); w.courses.envoyeeLe = new Date().toISOString(); saveSemaine(w); runShortcut(cfg().raccourciCourses || "Courses", t); }
