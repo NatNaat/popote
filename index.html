@@ -36,8 +36,8 @@
   --ok: #8CC7A9; --ok-soft: #1F3329; --warn: #E3B341; --warn-soft: #3A2F16; --bad: #E58B7B; --bad-soft: #3D211C; --teal: #7FC4CE; --teal-soft: #17323A; --plum: #D69AC6; --plum-soft: #3A2436; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; background: var(--bg); }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); height: 100%; overflow: hidden; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.45 var(--body); height: 100%; overflow: hidden; display: flex; flex-direction: column; }
 ::selection { background: var(--accent-soft); }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3, .display { font-family: var(--display); letter-spacing: -.01em; line-height: 1.1; text-wrap: balance; }
@@ -48,7 +48,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
 /* ───── Structure ───── */
-main { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(var(--tab) + env(safe-area-inset-bottom, 0px) + 24px); }
+main { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 28px; }
+main > * { max-width: 620px; margin-left: auto; margin-right: auto; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .topbar h1 { font-size: 26px; font-weight: 800; } .topbar .sub { display: block; font: 500 13px var(--body); color: var(--muted); margin-top: 2px; letter-spacing: 0; }
 .topbar .right, .hero .right { display: flex; align-items: center; gap: 8px; }
@@ -61,14 +62,14 @@ main { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 
 .settings { animation: slidein .28s var(--ease) both; }
 @keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
 .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font: 600 14px var(--body); color: var(--accent); margin-left: -6px; }
-nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 2px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+nav.tabs { flex: none; background: var(--surface); border-top: 2px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
 nav.tabs div { max-width: 620px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
 nav.tabs button { display: grid; justify-items: center; gap: 3px; min-height: var(--tab); padding-top: 8px; font: 600 11.5px var(--body); color: var(--muted); border-radius: 0; position: relative; }
 nav.tabs button[aria-current="page"] { color: var(--accent); } nav.tabs button[aria-current="page"] svg.i { background: var(--accent-soft); }
 nav.tabs svg.i { width: 40px; height: 30px; padding: 4px 9px; border-radius: 10px; stroke-width: 2.1; overflow: visible; }
 nav.tabs .cnt { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 700 11px/18px var(--display); text-align: center; }
 section.view { animation: fadein .25s ease both; } @keyframes fadein { from { opacity: 0; transform: translateY(4px); } }
-#banner { max-width: 620px; margin: 0 auto 10px; padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
+#banner { flex: none; max-width: 620px; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto 0; width: calc(100% - 32px); padding: 8px 12px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font: 500 13px/1.4 var(--body); }
 
 /* ───── Cartes et boutons « pressables » ───── */
 .card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
@@ -130,6 +131,22 @@ input[type=checkbox] { width: 22px; height: 22px; padding: 0; margin: 0; accent-
 
 .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 4px 0 14px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); overflow: hidden; }
 .kpis > div { padding: 12px 12px; } .kpis > div + div { border-left: 2px solid var(--line); } .kpis dt { font: 500 11px/1.25 var(--body); color: var(--muted); } .kpis dd { margin: 4px 0 0; font: 800 17px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+
+/* ───── Couleur par rôle (toujours doublée d'un libellé ou d'une icône) ───── */
+.tag.time { background: var(--accent-soft); color: var(--accent); }
+.tag.secours { background: var(--warn-soft); color: var(--warn); } .tag.essai { background: var(--plum-soft); color: var(--plum); }
+.tonight .mode .btn[data-v="0"][aria-pressed="true"] { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); }
+.tonight .mode .btn[data-v="1"][aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+.board::before { background: var(--pink); }
+.kpis > div:nth-child(1) dd { color: var(--warn); } .kpis > div:nth-child(2) dd { color: var(--teal); } .kpis > div:nth-child(3) dd { color: var(--plum); }
+.c-proteine { color: var(--bad); } .c-feculent { color: var(--warn); } .c-legume { color: var(--ok); } .c-fruit { color: var(--plum); } .c-laitier { color: var(--teal); } .c-sauce { color: var(--accent); } .c-plat { color: var(--ink-2); } .c-autre { color: var(--muted); }
+.sortcard { border-top-width: 6px; } .sortcard.c-proteine { border-top-color: var(--bad); } .sortcard.c-feculent { border-top-color: var(--warn); } .sortcard.c-legume { border-top-color: var(--ok); } .sortcard.c-fruit { border-top-color: var(--plum); } .sortcard.c-laitier { border-top-color: var(--teal); } .sortcard.c-sauce { border-top-color: var(--accent); } .sortcard.c-plat { border-top-color: var(--line-strong); } .sortcard.c-autre { border-top-color: var(--line-strong); }
+.rayon h3::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 7px; vertical-align: 0; background: var(--line-strong); }
+.rayon.r-fl h3::before { background: var(--ok); } .rayon.r-boul h3::before { background: var(--warn); } .rayon.r-bch h3::before { background: var(--bad); } .rayon.r-crem h3::before { background: var(--teal); } .rayon.r-epi h3::before { background: var(--plum); } .rayon.r-surg h3::before { background: var(--accent); } .rayon.r-bois h3::before { background: var(--pink); }
+.slot { border-left-width: 5px; border-left-color: var(--line-strong); } .slot.prevu { border-left-color: var(--accent); } .slot.fait { border-left-color: var(--ok); } .slot.flemme { border-left-color: var(--warn); } .slot.saute { border-left-color: var(--line); }
+.day.today .dn b { color: var(--pink); }
+nav.tabs button[aria-current="page"][data-tab="home"] svg.i { background: var(--pink); color: #1D1B26; } nav.tabs button[aria-current="page"][data-tab="week"] svg.i { background: var(--teal-soft); color: var(--teal); } nav.tabs button[aria-current="page"][data-tab="shop"] svg.i { background: var(--ok-soft); color: var(--ok); } nav.tabs button[aria-current="page"][data-tab="rep"] svg.i { background: var(--plum-soft); color: var(--plum); }
+nav.tabs button[aria-current="page"] { color: var(--ink); }
 
 /* ───── Semaine ───── */
 .weeknav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; } .weeknav h2 { font-size: 18px; } .weeknav button.nav { width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; } .weeknav button.nav svg.i { width: 18px; height: 18px; }
@@ -209,20 +226,20 @@ dialog[open] .sheet { animation: sheetin .32s var(--ease); } @keyframes sheetin 
 .sheet h1 { font-size: 22px; font-weight: 800; } .sheet .sub { font: 500 13.5px var(--body); color: var(--muted); margin: 4px 0 12px; }
 .sheet .acts { display: grid; gap: 8px; margin-top: 14px; }
 .pick { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); min-height: 48px; } .pick + .pick { margin-top: 6px; } .pick b { flex: 1; font: 600 14.5px var(--body); } .pick small { color: var(--muted); font: 500 12.5px var(--body); white-space: nowrap; }
-.toast { position: fixed; left: 50%; bottom: calc(var(--tab) + env(safe-area-inset-bottom, 0px) + 14px); transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font: 600 14px var(--body); animation: fadein .25s ease both; display: flex; gap: 14px; align-items: center; max-width: calc(100vw - 32px); }
+.toast { position: fixed; left: 50%; bottom: calc(var(--tab) + env(safe-area-inset-bottom, 0px) + 14px); z-index: 60; transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font: 600 14px var(--body); animation: fadein .25s ease both; display: flex; gap: 14px; align-items: center; max-width: calc(100vw - 32px); }
 .toast button { color: var(--pink); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
+<div id="banner" hidden></div>
+<main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
 <nav class="tabs" id="tabs" aria-label="Sections"><div>
   <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Ce soir</button>
   <button data-tab="week"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Semaine</button>
   <button data-tab="shop"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 8H6.2"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17.5" cy="20" r="1.2"/></svg>Courses<span class="cnt" id="shopcnt" hidden></span></button>
   <button data-tab="rep"><svg class="i" viewBox="0 0 24 24"><path d="M5 3v18M5 3h11a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5"/><path d="M9 8h6M9 12h6"/></svg>Répertoire</button>
 </div></nav>
-<div id="banner" hidden></div>
-<main id="app"><p class="muted" style="padding:40px 0">Chargement…</p></main>
 <dialog id="dlg"></dialog>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -530,7 +547,7 @@ const stTag = m => !m ? "" : m.statut === "fait" ? `<span class="tag ok">${ICON.
 function render() {
   tabsEl.querySelectorAll("button").forEach(b => b.dataset.tab === tab ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
   const open = shopOpen(week(weekId(today()))).length; const c = $("#shopcnt"); c.hidden = !open; c.textContent = open;
-  const y = window.scrollY; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); if (render.lastTab === tab) window.scrollTo(0, y); else window.scrollTo(0, 0); render.lastTab = tab;
+  const y = app.scrollTop; app.innerHTML = ({ home: viewHome, week: viewWeek, shop: viewShop, rep: viewRep, settings: viewSettings })[tab](); app.scrollTop = render.lastTab === tab ? y : 0; render.lastTab = tab;
   document.querySelectorAll(".bar i[data-p]").forEach(el => requestAnimationFrame(() => { el.style.transform = `scaleX(${el.dataset.p})`; }));
 }
 function mealActions(w, k, slot, m) {
@@ -544,7 +561,7 @@ function mealActions(w, k, slot, m) {
 function mealCard(w, k, slot, m) {
   const r = recette(m.flemme && m.secours ? m.secours : m.recette);
   return `<div class="card tonight"><div class="lead"><span class="tag">${slot === "soir" ? "Ce soir" : "Ce midi"}</span>${stTag(m)}</div>
-    ${r ? `<button class="dish" data-act="recipe" data-id="${r.id}" data-k="${k}" data-slot="${slot}" style="text-align:left">${esc(r.nom)}</button><div class="meta"><span class="tag">${r.minutes} min</span>${(r.equipement || []).map(e => `<span class="tag">${esc(EQUIP[e] || e)}</span>`).join("")}</div><p class="ings">${esc(ingLine(r))}</p>` : ""}${mealActions(w, k, slot, m)}</div>`;
+    ${r ? `<button class="dish" data-act="recipe" data-id="${r.id}" data-k="${k}" data-slot="${slot}" style="text-align:left">${esc(r.nom)}</button><div class="meta"><span class="tag time">${r.minutes} min</span>${(r.equipement || []).map(e => `<span class="tag">${esc(EQUIP[e] || e)}</span>`).join("")}</div><p class="ings">${esc(ingLine(r))}</p>` : ""}${mealActions(w, k, slot, m)}</div>`;
 }
 function essaiCard(w) {
   const e = w?.essai; if (!e || e.resultat) return ""; const a = S.aliments[e.aliment]; if (!a) return "";
@@ -573,7 +590,7 @@ function viewHome() {
 function viewWeek() {
   const monday = addDays(mondayOf(today()), weekOff * 7), w = week(monday), days = weekDays(monday), k0 = today();
   const remaining = days.filter(k => k >= k0 && slots(k).some(s => !meal(w, k, s) || meal(w, k, s).statut === "prevu"));
-  const rows = days.map(k => { const sl = slots(k); return `<div class="day${k === k0 ? " today" : ""}"><div class="dn"><b>${WDS[weekday(k)]}</b><small>${k.slice(8)}/${k.slice(5, 7)}</small></div><div>${sl.map(s => { const m = meal(w, k, s); if (!m) return k < k0 ? `<div class="slot empty"><span class="lbl">${s}</span><span class="nm">Rien de noté</span></div>` : `<button class="slot empty" data-act="recompose-day" data-k="${k}"><span class="lbl">${s}</span><span class="nm">Rien de prévu · proposer</span></button>`; const r = recette(m.flemme && m.secours ? m.secours : m.recette); return `<button class="slot ${m.statut}" data-act="recipe" data-id="${r?.id || ""}" data-k="${k}" data-slot="${s}"><span class="lbl">${s}</span><span class="nm">${esc(r?.nom || "?")}<small>${r ? r.minutes + " min" : ""}${m.secours && s === "soir" && !m.flemme ? " · secours : " + esc(recette(m.secours)?.nom || "") : ""}</small></span><span class="st">${stTag(m)}</span></button>`; }).join("")}</div></div>`; }).join("");
+  const rows = days.map(k => { const sl = slots(k); return `<div class="day${k === k0 ? " today" : ""}"><div class="dn"><b>${WDS[weekday(k)]}</b><small>${k.slice(8)}/${k.slice(5, 7)}</small></div><div>${sl.map(s => { const m = meal(w, k, s); if (!m) return k < k0 ? `<div class="slot empty"><span class="lbl">${s}</span><span class="nm">Rien de noté</span></div>` : `<button class="slot empty" data-act="recompose-day" data-k="${k}"><span class="lbl">${s}</span><span class="nm">Rien de prévu · proposer</span></button>`; const r = recette(m.flemme && m.secours ? m.secours : m.recette); return `<button class="slot ${m.statut}${m.flemme && m.statut === "prevu" ? " flemme" : ""}" data-act="recipe" data-id="${r?.id || ""}" data-k="${k}" data-slot="${s}"><span class="lbl">${s}</span><span class="nm">${esc(r?.nom || "?")}<small>${r ? r.minutes + " min" : ""}${m.secours && s === "soir" && !m.flemme ? " · secours : " + esc(recette(m.secours)?.nom || "") : ""}</small></span><span class="st">${stTag(m)}</span></button>`; }).join("")}</div></div>`; }).join("");
   return `<section class="view"><div class="topbar"><div><h1>Semaine</h1><span class="sub">${w?.source === "claude" ? "Composée par Claude" : w ? "Composée par les règles" : "Pas encore composée"}</span></div>${GEAR}</div>
     <div class="weeknav"><button class="nav" data-act="week-off" data-v="-1" aria-label="Semaine précédente">${ICON.left}</button><h2>${esc(fmtDay(monday))} → ${esc(fmtDay(addDays(monday, 6)))}${weekOff === 0 ? "" : weekOff === 1 ? " · prochaine" : ""}</h2><button class="nav" data-act="week-off" data-v="1" aria-label="Semaine suivante">${ICON.right}</button></div>
     ${w?.resume ? `<p class="resume">${esc(w.resume)}</p>` : ""}
@@ -587,11 +604,11 @@ function viewShop() {
   if (!w || !items.length) return `<section class="view"><div class="topbar"><h1>Courses</h1>${GEAR}</div><div class="card"><p class="quiet">${w && Object.keys(w.jours || {}).length ? "La liste se construit depuis les repas de la semaine." : "Compose d'abord la semaine, la liste de courses en découle."}</p>${w && Object.keys(w.jours || {}).length ? `<button class="btn wide" data-act="regen-shop" data-monday="${monday}">Faire la liste</button>` : `<button class="btn wide" data-act="tab" data-tab="week">Aller à la semaine</button>`}</div></section>`;
   const todo = items.filter(i => !inPlacard(i)), done = todo.filter(i => i.coche).length, by = {}; for (const it of todo) (by[it.rayon] ||= []).push(it);
   const placardItems = items.filter(inPlacard);
-  const row = it => `<button class="item${it.coche ? " on" : ""}" data-act="coche" data-k="${esc(it.k)}" aria-pressed="${!!it.coche}"><span class="box">${ICON.check}</span><span class="nm">${esc(it.nom)}</span>${it.secours ? `<span class="tag">secours</span>` : ""}${it.essai ? `<span class="tag teal">essai</span>` : ""}<span class="qty">${esc(it.qte)}</span></button>`;
+  const row = it => `<button class="item${it.coche ? " on" : ""}" data-act="coche" data-k="${esc(it.k)}" aria-pressed="${!!it.coche}"><span class="box">${ICON.check}</span><span class="nm">${esc(it.nom)}</span>${it.secours ? `<span class="tag secours">secours</span>` : ""}${it.essai ? `<span class="tag essai">essai</span>` : ""}<span class="qty">${esc(it.qte)}</span></button>`;
   return `<section class="view"><div class="topbar"><div><h1>Courses</h1><span class="sub">Semaine du ${esc(fmtDay(monday))}${cfg().magasin ? " · " + esc(cfg().magasin) : ""}</span></div>${GEAR}</div>
     <div class="progress"><span>${done}/${todo.length}</span><div class="bar"><i data-p="${todo.length ? done / todo.length : 0}"></i></div></div>
     <div class="row" style="margin-bottom:14px"><button class="btn ghost sm" data-act="copy-shop">${ICON.copy} Copier</button><button class="btn ghost sm" data-act="rappels">Envoyer dans Rappels</button></div>
-    ${RAYON_ORDER.filter(r => by[r]).map(r => `<div class="rayon"><h3>${RAYONS[r]}</h3>${by[r].map(row).join("")}</div>`).join("")}
+    ${RAYON_ORDER.filter(r => by[r]).map(r => `<div class="rayon r-${r}"><h3>${RAYONS[r]}</h3>${by[r].map(row).join("")}</div>`).join("")}
     <div class="card flat"><div class="lead"><h2>Frigo et placard</h2><button class="link" data-act="regen-shop" data-monday="${monday}">Refaire la liste</button></div><p class="note" style="margin:0 0 10px">${stockCount() ? plural(stockCount(), "article") + " chez toi en ce moment" : "Rien de noté chez toi"}${(cfg().placard || []).length ? ", " + plural(cfg().placard.length, "basique") + " toujours là" : ""}. Cocher un article acheté le met au frigo ; la liste ne propose pas ce que tu as déjà.</p><button class="btn ghost wide" data-act="stock">Mettre à jour mon frigo</button>${placardItems.length ? `<p class="note">Retirés de la liste : ${placardItems.map(i => esc(i.nom)).join(", ")}.</p>` : ""}</div>
     <p class="note">Liste faite ${w.courses.genereeLe ? "le " + new Date(w.courses.genereeLe).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""} depuis les repas à venir. Les repas déjà faits ou sautés n'y sont plus.</p></section>`;
 }
@@ -600,7 +617,7 @@ function viewRep() {
   if (sorting && rest.length) { const q = rest.filter(a => !sortSkip.has(a.id)); const a = q[0] || rest[0]; const done = CATALOG.length - rest.length;
     return `<section class="view"><div class="topbar"><div><h1>Tri des aliments</h1><span class="sub">${done} / ${CATALOG.length} · ${plural(rest.length, "carte")} restante${rest.length > 1 ? "s" : ""}</span></div><button class="link" data-act="sort-stop">Plus tard</button></div>
       <div class="bar" style="margin-bottom:14px"><i data-p="${done / CATALOG.length}"></i></div>
-      <div class="card sortcard"><p class="cat">${CATS[a.cat]}</p><p class="nm">${esc(a.nom)}</p><p class="hint">Tel que tu le manges d'habitude, pas dans l'absolu.</p>
+      <div class="card sortcard c-${a.cat}"><p class="cat c-${a.cat}">${CATS[a.cat]}</p><p class="nm">${esc(a.nom)}</p><p class="hint">Tel que tu le manges d'habitude, pas dans l'absolu.</p>
       <div class="verdicts"><button class="btn vb-adore" data-act="sort" data-id="${a.id}" data-v="adore"><i>♥</i>J'adore</button><button class="btn vb-ok" data-act="sort" data-id="${a.id}" data-v="ok"><i>✓</i>Ça va</button><button class="btn vb-essai" data-act="sort" data-id="${a.id}" data-v="essai"><i>?</i>À essayer</button><button class="btn vb-jamais" data-act="sort" data-id="${a.id}" data-v="jamais"><i>✕</i>Jamais</button></div>
       <button class="link" data-act="sort-skip" data-id="${a.id}" style="margin-top:12px">Passer (je ne sais pas)</button></div></section>`; }
   const list = alimentsList().filter(a => (repCat === "all" || a.cat === repCat) && (repV === "all" || a.verdict === repV)).sort((x, y) => x.nom.localeCompare(y.nom, "fr"));
@@ -612,7 +629,7 @@ function viewRep() {
     <div class="row" style="margin-bottom:10px"><button class="btn ghost sm" data-act="add-aliment">+ Ajouter un aliment</button></div>
     <div class="chips">${[["all", "Tout"], ...Object.entries(VERDICTS).map(([v, d]) => [v, d.ico + " " + d.lbl])].map(([v, l]) => `<button class="chip" data-act="rep-v" data-v="${v}" aria-pressed="${repV === v}">${l}</button>`).join("")}</div>
     <div class="chips">${[["all", "Toutes catégories"], ...Object.entries(CATS)].map(([c, l]) => `<button class="chip" data-act="rep-cat" data-v="${c}" aria-pressed="${repCat === c}">${l}</button>`).join("")}</div>
-    ${list.length ? list.map(a => `<button class="al" data-act="aliment" data-id="${a.id}"><span class="v ${a.verdict}">${VERDICTS[a.verdict].ico}</span><span class="nm">${esc(a.nom)}<small>${CATS[a.cat]}${a.notes ? " · " + esc(a.notes) : ""}${(a.essais || []).length ? " · " + plural(a.essais.length, "essai") : ""}</small></span>${ICON.right}</button>`).join("") : `<p class="quiet">Rien ici pour l'instant.</p>`}</section>`;
+    ${list.length ? list.map(a => `<button class="al" data-act="aliment" data-id="${a.id}"><span class="v ${a.verdict}">${VERDICTS[a.verdict].ico}</span><span class="nm">${esc(a.nom)}<small><span class="c-${a.cat}">${CATS[a.cat]}</span>${a.notes ? " · " + esc(a.notes) : ""}${(a.essais || []).length ? " · " + plural(a.essais.length, "essai") : ""}</small></span>${ICON.right}</button>`).join("") : `<p class="quiet">Rien ici pour l'instant.</p>`}</section>`;
 }
 
 // ───────────── Feuilles ─────────────
